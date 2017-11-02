@@ -1,10 +1,9 @@
 ﻿using System;
-using Infortecs.MiniJournal.Service;
 using Infotecs.MiniJournal.Dal;
 using Moq;
 using NUnit.Framework;
 
-namespace MiniJournal.Service.Tests
+namespace Infotecs.MiniJournal.Service.Tests
 {
     [TestFixture]
     public class ArticleServiceTests

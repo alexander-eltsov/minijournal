@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C7C70F46-2299-43DC-AD16-CADA447F3B02}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Infortecs.MiniJournal.Service</RootNamespace>
-    <AssemblyName>Infortecs.MiniJournal.Service</AssemblyName>
+    <RootNamespace>Infotecs.MiniJournal.Service</RootNamespace>
+    <AssemblyName>Infotecs.MiniJournal.Service</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

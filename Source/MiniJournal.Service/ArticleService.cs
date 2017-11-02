@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
 
-namespace Infortecs.MiniJournal.Service
+namespace Infotecs.MiniJournal.Service
 {
     public class ArticleService : IArticleService
     {

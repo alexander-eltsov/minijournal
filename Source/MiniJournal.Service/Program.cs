@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using Autofac;
 using Autofac.Integration.Wcf;
-using Infortecs.MiniJournal.Service;
 using Infotecs.MiniJournal.Contracts;
 
-namespace MiniJournal.Service
+namespace Infotecs.MiniJournal.Service
 {
     public class Program
     {
