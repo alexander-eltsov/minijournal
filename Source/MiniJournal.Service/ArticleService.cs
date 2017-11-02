@@ -11,6 +11,11 @@ namespace Infortecs.MiniJournal.Service
 
         public ArticleService(IArticleRepository articleRepository)
         {
+            if (articleRepository == null)
+            {
+                throw new ArgumentNullException(nameof(articleRepository));
+            }
+
             ArticleRepository = articleRepository;
         }
 

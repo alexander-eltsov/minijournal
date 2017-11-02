@@ -53,6 +53,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MiniJournal.Contracts\MiniJournal.Contracts.csproj">
+      <Project>{5D8FF6E0-8586-41F8-AEA6-4EE8C5132144}</Project>
+      <Name>MiniJournal.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MiniJournal.Dal\MiniJournal.Dal.csproj">
+      <Project>{BAB72108-4A09-487C-9C6E-D9D3B9CFACB0}</Project>
+      <Name>MiniJournal.Dal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MiniJournal.Service\MiniJournal.Service.csproj">
       <Project>{c7c70f46-2299-43dc-ad16-cada447f3b02}</Project>
       <Name>MiniJournal.Service</Name>
