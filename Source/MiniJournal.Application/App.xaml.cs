@@ -18,7 +18,7 @@ namespace Infotecs.MiniJournal.Application
 
             var window = new Views.MainWindow
             {
-                DataContext = container.Resolve<MainViewModel>()
+                DataContext = container.Resolve<ArticlesViewModel>()
             };
             window.Show();
         }

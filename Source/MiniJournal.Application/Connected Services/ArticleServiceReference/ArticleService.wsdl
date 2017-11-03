@@ -15,6 +15,48 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="CreateArticle">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q2:ArticleData" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="CreateArticleResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="CreateArticleResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateArticle">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q3:ArticleData" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UpdateArticleResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="UpdateArticleResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeleteArticle">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q4:ArticleData" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeleteArticleResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="DeleteArticleResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:schema>
     <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
       <xs:element name="anyType" nillable="true" type="xs:anyType" />
@@ -80,16 +122,73 @@
   <wsdl:message name="IArticleService_GetAllArticles_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetAllArticlesResponse" />
   </wsdl:message>
+  <wsdl:message name="IArticleService_CreateArticle_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateArticle" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_CreateArticle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateArticleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_UpdateArticle_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateArticle" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_UpdateArticle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateArticleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_DeleteArticle_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteArticle" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_DeleteArticle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteArticleResponse" />
+  </wsdl:message>
   <wsdl:portType name="IArticleService">
     <wsdl:operation name="GetAllArticles">
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetAllArticles" message="tns:IArticleService_GetAllArticles_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/GetAllArticlesResponse" message="tns:IArticleService_GetAllArticles_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateArticle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/CreateArticle" message="tns:IArticleService_CreateArticle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/CreateArticleResponse" message="tns:IArticleService_CreateArticle_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateArticle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/UpdateArticle" message="tns:IArticleService_UpdateArticle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/UpdateArticleResponse" message="tns:IArticleService_UpdateArticle_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteArticle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/DeleteArticle" message="tns:IArticleService_DeleteArticle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/DeleteArticleResponse" message="tns:IArticleService_DeleteArticle_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IArticleService" type="tns:IArticleService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="GetAllArticles">
       <soap:operation soapAction="http://tempuri.org/IArticleService/GetAllArticles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateArticle">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/CreateArticle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateArticle">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/UpdateArticle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteArticle">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/DeleteArticle" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

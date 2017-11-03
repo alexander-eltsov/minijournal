@@ -4,11 +4,19 @@ using System.ServiceModel;
 
 namespace Infotecs.MiniJournal.Contracts
 {
-    //[ServiceContract(Name = "ArticleService", Namespace = "http://Infotecs.MiniJournal.Service")]
     [ServiceContract]
     public interface IArticleService
     {
         [OperationContract]
         IEnumerable<ArticleData> GetAllArticles();
+
+        [OperationContract]
+        bool CreateArticle(ArticleData article);
+
+        [OperationContract]
+        bool UpdateArticle(ArticleData article);
+
+        [OperationContract]
+        bool DeleteArticle(ArticleData article);
     }
 }

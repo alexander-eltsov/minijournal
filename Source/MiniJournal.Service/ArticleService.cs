@@ -23,5 +23,20 @@ namespace Infotecs.MiniJournal.Service
         {
             return ArticleRepository.GetArticles();
         }
+
+        public bool CreateArticle(ArticleData article)
+        {
+            return ArticleRepository.CreateArticle(article);
+        }
+
+        public bool UpdateArticle(ArticleData article)
+        {
+            return ArticleRepository.UpdateArticle(article);
+        }
+
+        public bool DeleteArticle(ArticleData article)
+        {
+            return ArticleRepository.DeleteArticle(article);
+        }
     }
 }

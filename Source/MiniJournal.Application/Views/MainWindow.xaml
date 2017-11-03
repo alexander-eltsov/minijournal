@@ -6,30 +6,46 @@
         xmlns:viewModels="clr-namespace:Infotecs.MiniJournal.Application.ViewModels"
         xmlns:models="clr-namespace:Infotecs.MiniJournal.Application.ArticleServiceReference"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewModels:MainViewModel}"
+        d:DataContext="{d:DesignInstance viewModels:ArticlesViewModel}"
         Title="MainWindow" Height="350" Width="525">
 
-    <DockPanel Margin="30">
-        
-        <StackPanel DockPanel.Dock="Bottom">
-            <Button Command="{Binding LoadArticlesCommand}" Content="Load Articles"></Button>
-        </StackPanel>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+        <Style TargetType="Label">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+    </Window.Resources>
 
-        <ListBox ItemsSource="{Binding Articles}" DockPanel.Dock="Bottom">
-            <ListBox.Resources>
-                <DataTemplate DataType="{x:Type models:ArticleData}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition SharedSizeGroup="Caption" />
-                            <ColumnDefinition SharedSizeGroup="Text" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Content="{Binding Caption}" />
-                        <Label Grid.Column="1" Content="{Binding Text}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.Resources>
-        </ListBox>
-        
+    <DockPanel Margin="10">
+        <ToolBar DockPanel.Dock="Top">
+            <Button Command="{Binding LoadArticlesCommand}">Load</Button>
+            <Button Command="{Binding AddArticleCommand}">New</Button>
+            <Separator></Separator>
+            <Button Command="{Binding SaveArticleCommand}" Visibility="{Binding CanModifyArticle, Converter={StaticResource VisibilityConverter}}">Save</Button>
+            <Button Command="{Binding DeleteArticleCommand}" Visibility="{Binding CanModifyArticle, Converter={StaticResource VisibilityConverter}}">Delete</Button>
+        </ToolBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ListBox ItemsSource="{Binding Articles}" SelectedItem="{Binding SelectedArticle}" Grid.Row="0" Grid.Column="0">
+                <ListBox.Resources>
+                    <DataTemplate DataType="{x:Type models:ArticleData}">
+                        <Label Content="{Binding Caption}"></Label>
+                    </DataTemplate>
+                </ListBox.Resources>
+            </ListBox>
+            <StackPanel Margin="10 0 0 0" Grid.Row="0" Grid.Column="1">
+                <Label>Caption</Label>
+                <TextBox Text="{Binding SelectedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                <Label>Text</Label>
+                <TextBox TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding SelectedArticle.Text, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </Grid>
     </DockPanel>
 
 </Window>

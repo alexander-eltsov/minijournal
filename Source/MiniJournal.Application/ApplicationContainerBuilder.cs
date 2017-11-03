@@ -12,7 +12,7 @@ namespace Infotecs.MiniJournal.Application
 
             builder.RegisterType<ArticleServiceClient>().As<IArticleService>();
 
-            builder.RegisterType<MainViewModel>().AsSelf();
+            builder.RegisterType<ArticlesViewModel>().AsSelf();
 
             return builder.Build();
         }
