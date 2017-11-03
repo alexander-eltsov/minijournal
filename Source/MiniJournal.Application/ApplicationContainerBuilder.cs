@@ -10,6 +10,8 @@ namespace Infotecs.MiniJournal.Application
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<Logger>().As<ILogger>();
+
             builder.RegisterType<ArticleServiceClient>().As<IArticleService>();
 
             builder.RegisterType<ArticlesViewModel>().AsSelf();

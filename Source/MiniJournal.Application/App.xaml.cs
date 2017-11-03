@@ -16,6 +16,9 @@ namespace Infotecs.MiniJournal.Application
             var containerBuilder = new ApplicationContainerBuilder();
             var container = containerBuilder.Build();
 
+            var logger = container.Resolve<ILogger>();
+            logger.LogEnvironmentInfo();
+
             var window = new Views.MainWindow
             {
                 DataContext = container.Resolve<ArticlesViewModel>()

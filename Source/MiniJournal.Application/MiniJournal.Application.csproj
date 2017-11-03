@@ -39,6 +39,12 @@
     <Reference Include="Autofac, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.4.0.0\lib\net451\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Infotecs.Opus, Version=1.0.0.70, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Opus.1.0.70\lib\net35\Infotecs.Opus.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NLog.4.3.6\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -58,6 +64,8 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationContainerBuilder.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="ViewModels\ArticlesViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

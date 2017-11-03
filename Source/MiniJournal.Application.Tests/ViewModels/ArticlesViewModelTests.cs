@@ -13,15 +13,18 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
         [Test]
         public void Constructor_NullArticleServiceProvided_ThrowsArgumentNullException()
         {
+            var mockLogger = new Mock<ILogger>();
+
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var sut = new ArticlesViewModel(null);
+                var sut = new ArticlesViewModel(null, mockLogger.Object);
             });
         }
 
         [Test]
         public void LoadArticlesCommand_WhenExecuted_FillsArticles()
         {
+            var mockLogger = new Mock<ILogger>();
             var moqArticleService = new Mock<IArticleService>();
             moqArticleService
                 .Setup(service => service.GetAllArticles())
@@ -36,7 +39,7 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
                         }
                     };
                 });
-            var sut = new ArticlesViewModel(moqArticleService.Object);
+            var sut = new ArticlesViewModel(moqArticleService.Object, mockLogger.Object);
 
             sut.LoadArticlesCommand.Execute(null);
 
@@ -47,6 +50,7 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
         [Test]
         public void LoadArticlesCommand_ClearsArticlesBeforeFill()
         {
+            var mockLogger = new Mock<ILogger>();
             var moqArticleService = new Mock<IArticleService>();
             moqArticleService
                 .Setup(service => service.GetAllArticles())
@@ -61,7 +65,7 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
                         }
                     };
                 });
-            var sut = new ArticlesViewModel(moqArticleService.Object);
+            var sut = new ArticlesViewModel(moqArticleService.Object, mockLogger.Object);
 
             sut.LoadArticlesCommand.Execute(null);
             sut.LoadArticlesCommand.Execute(null);

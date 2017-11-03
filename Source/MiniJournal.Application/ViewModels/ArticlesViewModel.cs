@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ServiceModel;
 using System.Windows.Input;
 using Infotecs.MiniJournal.Application.ArticleServiceReference;
 using Infotecs.MiniJournal.Application.Commands;
@@ -10,9 +11,12 @@ namespace Infotecs.MiniJournal.Application.ViewModels
     public class ArticlesViewModel : BaseViewModel
     {
         private readonly IArticleService articleService;
+        private readonly ILogger logger;
         private ArticleData selectedArticle;
 
-        public ArticlesViewModel(IArticleService articleService)
+        public ArticlesViewModel(
+            IArticleService articleService,
+            ILogger logger)
         {
             if (articleService == null)
             {
@@ -20,6 +24,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
 
             this.articleService = articleService;
+            this.logger = logger;
             Articles = new ObservableCollection<ArticleData>();
 
             LoadArticlesCommand = new RelayCommand(parameter => LoadArticles());
@@ -54,7 +59,19 @@ namespace Infotecs.MiniJournal.Application.ViewModels
         private void LoadArticles()
         {
             Articles.Clear();
-            foreach (ArticleData articleData in articleService.GetAllArticles())
+            var articlesFromService = new ArticleData[0];
+
+            try
+            {
+                articlesFromService = articleService.GetAllArticles();
+            }
+            catch (EndpointNotFoundException exception)
+            {
+                logger.LogError(exception.ToString());
+                // TODO: inform user, consider using some IDialogService
+            }
+
+            foreach (ArticleData articleData in articlesFromService)
             {
                 Articles.Add(articleData);
             }
@@ -68,20 +85,54 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 Text = string.Empty
             };
 
-            articleService.CreateArticle(newArticle);
+            bool articleCreated = false;
 
-            Articles.Add(newArticle);
+            try
+            {
+                articleCreated = articleService.CreateArticle(newArticle);
+            }
+            catch (EndpointNotFoundException exception)
+            {
+                logger.LogError(exception.ToString());
+                // TODO: inform user, consider using some IDialogService
+            }
+
+            if (articleCreated)
+            {
+                Articles.Add(newArticle);
+            }
         }
 
         private void SaveSelectedArticle()
         {
-            articleService.UpdateArticle(SelectedArticle);
+            try
+            {
+                articleService.UpdateArticle(SelectedArticle);
+            }
+            catch (EndpointNotFoundException exception)
+            {
+                logger.LogError(exception.ToString());
+                // TODO: inform user, consider using some IDialogService
+            }
         }
 
         private void DeleteSelectedArticle()
         {
-            articleService.DeleteArticle(SelectedArticle);
-            LoadArticles();
+            bool articleDeleted = false;
+            try
+            {
+                articleDeleted = articleService.DeleteArticle(SelectedArticle);
+            }
+            catch (EndpointNotFoundException exception)
+            {
+                logger.LogError(exception.ToString());
+                // TODO: inform user, consider using some IDialogService
+            }
+
+            if (articleDeleted)
+            {
+                LoadArticles();
+            }
         }
     }
 }
