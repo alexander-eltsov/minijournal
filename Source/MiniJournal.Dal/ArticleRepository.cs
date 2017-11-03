@@ -7,18 +7,18 @@ namespace Infotecs.MiniJournal.Dal
 {
     public class ArticleRepository : IArticleRepository
     {
-        private readonly ConnectionFactory connectionFactory;
+        private IConnectionFactory ConnectionFactory { get; }
 
-        public ArticleRepository()
+        public ArticleRepository(IConnectionFactory connectionFactory)
         {
-            connectionFactory = new ConnectionFactory();
+            ConnectionFactory = connectionFactory;
         }
 
         public IEnumerable<ArticleData> GetArticles()
         {
             string sql = "SELECT * FROM Articles";
 
-            using (var connection = connectionFactory.Create())
+            using (var connection = ConnectionFactory.Create())
             {
                 connection.Open();
 
