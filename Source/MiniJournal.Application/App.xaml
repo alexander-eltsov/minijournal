@@ -1,8 +1,7 @@
-﻿<Application x:Class="MiniJournal.Application.App"
+﻿<Application x:Class="Infotecs.MiniJournal.Application.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MiniJournal.Application"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:Infotecs.MiniJournal.Application">
     <Application.Resources>
          
     </Application.Resources>

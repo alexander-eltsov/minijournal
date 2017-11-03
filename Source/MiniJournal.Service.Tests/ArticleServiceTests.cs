@@ -9,7 +9,7 @@ namespace Infotecs.MiniJournal.Service.Tests
     public class ArticleServiceTests
     {
         [Test]
-        public void ctor_NullArticleRepositoryProvided_ThrowsArgumentNullException()
+        public void Constructor_NullArticleRepositoryProvided_ThrowsArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {

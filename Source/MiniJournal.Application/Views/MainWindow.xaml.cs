@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Infotecs.MiniJournal.Application
+namespace Infotecs.MiniJournal.Application.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
