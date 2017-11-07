@@ -1,5 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Autofac;
+using Autofac.Extras.Moq;
 using Infotecs.MiniJournal.Application.ArticleServiceReference;
 using Infotecs.MiniJournal.Application.ViewModels;
 using Moq;
@@ -11,67 +12,60 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
     public class ArticlesViewModelTests
     {
         [Test]
-        public void Constructor_NullArticleServiceProvided_ThrowsArgumentNullException()
-        {
-            var mockLogger = new Mock<ILogger>();
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var sut = new ArticlesViewModel(null, mockLogger.Object);
-            });
-        }
-
-        [Test]
         public void LoadArticlesCommand_WhenExecuted_FillsArticles()
         {
-            var mockLogger = new Mock<ILogger>();
-            var moqArticleService = new Mock<IArticleService>();
-            moqArticleService
-                .Setup(service => service.GetAllArticles())
-                .Returns(() =>
-                {
-                    return new ArticleData[1]
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var moqArticleService = new Mock<IArticleService>();
+                moqArticleService
+                    .Setup(service => service.GetAllArticles())
+                    .Returns(() =>
                     {
-                        new ArticleData
+                        return new ArticleData[1]
                         {
-                            Caption = "Fake Article",
-                            Text = string.Empty
-                        }
-                    };
-                });
-            var sut = new ArticlesViewModel(moqArticleService.Object, mockLogger.Object);
+                            new ArticleData
+                            {
+                                Caption = "Fake Article",
+                                Text = string.Empty
+                            }
+                        };
+                    });
+                var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
-            sut.LoadArticlesCommand.Execute(null);
+                sut.LoadArticlesCommand.Execute(null);
 
-            Assert.AreEqual(1, sut.Articles.Count);
-            Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+                Assert.AreEqual(1, sut.Articles.Count);
+                Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+            }
         }
 
         [Test]
         public void LoadArticlesCommand_ClearsArticlesBeforeFill()
         {
-            var mockLogger = new Mock<ILogger>();
-            var moqArticleService = new Mock<IArticleService>();
-            moqArticleService
-                .Setup(service => service.GetAllArticles())
-                .Returns(() =>
-                {
-                    return new ArticleData[1]
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var moqArticleService = new Mock<IArticleService>();
+                moqArticleService
+                    .Setup(service => service.GetAllArticles())
+                    .Returns(() =>
                     {
-                        new ArticleData
+                        return new ArticleData[1]
                         {
-                            Caption = "Fake Article",
-                            Text = string.Empty
-                        }
-                    };
-                });
-            var sut = new ArticlesViewModel(moqArticleService.Object, mockLogger.Object);
+                            new ArticleData
+                            {
+                                Caption = "Fake Article",
+                                Text = string.Empty
+                            }
+                        };
+                    });
+                var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
-            sut.LoadArticlesCommand.Execute(null);
-            sut.LoadArticlesCommand.Execute(null);
+                sut.LoadArticlesCommand.Execute(null);
+                sut.LoadArticlesCommand.Execute(null);
 
-            Assert.AreEqual(1, sut.Articles.Count);
-            Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+                Assert.AreEqual(1, sut.Articles.Count);
+                Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+            }
         }
     }
 }

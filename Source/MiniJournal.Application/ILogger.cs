@@ -6,5 +6,6 @@ namespace Infotecs.MiniJournal.Application
     {
         void LogEnvironmentInfo();
         void LogError(string error);
+        void LogError(Exception exception);
     }
 }

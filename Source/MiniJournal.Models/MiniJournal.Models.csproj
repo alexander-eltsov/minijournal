@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BAB72108-4A09-487C-9C6E-D9D3B9CFACB0}</ProjectGuid>
+    <ProjectGuid>{BFA49D85-EA09-435D-83DC-973C7B8BF223}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Infotecs.MiniJournal.Dal</RootNamespace>
-    <AssemblyName>Infotecs.MiniJournal.Dal</AssemblyName>
+    <RootNamespace>Infotecs.MiniJournal.Models</RootNamespace>
+    <AssemblyName>Infotecs.MiniJournal.Models</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,28 +32,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleRepository.cs" />
-    <Compile Include="ConnectionFactory.cs" />
-    <Compile Include="IArticleRepository.cs" />
-    <Compile Include="IConnectionFactory.cs" />
+    <Compile Include="Article.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MiniJournal.Models\MiniJournal.Models.csproj">
-      <Project>{bfa49d85-ea09-435d-83dc-973c7b8bf223}</Project>
-      <Name>MiniJournal.Models</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

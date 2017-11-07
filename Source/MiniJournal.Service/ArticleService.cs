@@ -2,41 +2,51 @@
 using System.Collections.Generic;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
+using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Service
 {
     public class ArticleService : IArticleService
     {
-        private IArticleRepository ArticleRepository { get; }
+        private readonly IArticleRepository articleRepository;
+        private readonly IMapper mapper;
 
-        public ArticleService(IArticleRepository articleRepository)
+        public ArticleService(
+            IArticleRepository articleRepository,
+            IMapper mapper)
         {
             if (articleRepository == null)
             {
                 throw new ArgumentNullException(nameof(articleRepository));
             }
 
-            ArticleRepository = articleRepository;
+            this.articleRepository = articleRepository;
+            this.mapper = mapper;
         }
 
         public IEnumerable<ArticleData> GetAllArticles()
         {
-            return ArticleRepository.GetArticles();
+            IList<Article> articles = articleRepository.GetArticles();
+            IEnumerable<ArticleData> articleDatas = mapper.Map<IList<Article>, IEnumerable<ArticleData>>(articles);
+
+            return articleDatas;
         }
 
-        public bool CreateArticle(ArticleData article)
+        public void CreateArticle(ArticleData article)
         {
-            return ArticleRepository.CreateArticle(article);
+            var articleModel = mapper.Map<ArticleData, Article>(article);
+            articleRepository.CreateArticle(articleModel);
         }
 
-        public bool UpdateArticle(ArticleData article)
+        public void UpdateArticle(ArticleData article)
         {
-            return ArticleRepository.UpdateArticle(article);
+            var articleModel = mapper.Map<ArticleData, Article>(article);
+            articleRepository.UpdateArticle(articleModel);
         }
 
-        public bool DeleteArticle(ArticleData article)
+        public void DeleteArticle(int articleId)
         {
-            return ArticleRepository.DeleteArticle(article);
+            articleRepository.DeleteArticle(articleId);
         }
     }
 }

@@ -101,22 +101,22 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData[]> GetAllArticlesAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/CreateArticle", ReplyAction="http://tempuri.org/IArticleService/CreateArticleResponse")]
-        bool CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        void CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/CreateArticle", ReplyAction="http://tempuri.org/IArticleService/CreateArticleResponse")]
-        System.Threading.Tasks.Task<bool> CreateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        System.Threading.Tasks.Task CreateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/UpdateArticle", ReplyAction="http://tempuri.org/IArticleService/UpdateArticleResponse")]
-        bool UpdateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        void UpdateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/UpdateArticle", ReplyAction="http://tempuri.org/IArticleService/UpdateArticleResponse")]
-        System.Threading.Tasks.Task<bool> UpdateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        System.Threading.Tasks.Task UpdateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/DeleteArticle", ReplyAction="http://tempuri.org/IArticleService/DeleteArticleResponse")]
-        bool DeleteArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        void DeleteArticle(int articleId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/DeleteArticle", ReplyAction="http://tempuri.org/IArticleService/DeleteArticleResponse")]
-        System.Threading.Tasks.Task<bool> DeleteArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
+        System.Threading.Tasks.Task DeleteArticleAsync(int articleId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -154,28 +154,28 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
             return base.Channel.GetAllArticlesAsync();
         }
         
-        public bool CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
-            return base.Channel.CreateArticle(article);
+        public void CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
+            base.Channel.CreateArticle(article);
         }
         
-        public System.Threading.Tasks.Task<bool> CreateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
+        public System.Threading.Tasks.Task CreateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
             return base.Channel.CreateArticleAsync(article);
         }
         
-        public bool UpdateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
-            return base.Channel.UpdateArticle(article);
+        public void UpdateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
+            base.Channel.UpdateArticle(article);
         }
         
-        public System.Threading.Tasks.Task<bool> UpdateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
+        public System.Threading.Tasks.Task UpdateArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
             return base.Channel.UpdateArticleAsync(article);
         }
         
-        public bool DeleteArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
-            return base.Channel.DeleteArticle(article);
+        public void DeleteArticle(int articleId) {
+            base.Channel.DeleteArticle(articleId);
         }
         
-        public System.Threading.Tasks.Task<bool> DeleteArticleAsync(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {
-            return base.Channel.DeleteArticleAsync(article);
+        public System.Threading.Tasks.Task DeleteArticleAsync(int articleId) {
+            return base.Channel.DeleteArticleAsync(articleId);
         }
     }
 }

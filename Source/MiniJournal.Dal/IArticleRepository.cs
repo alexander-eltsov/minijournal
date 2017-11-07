@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Dal
 {
     public interface IArticleRepository
     {
-        IEnumerable<ArticleData> GetArticles();
+        IList<Article> GetArticles();
 
-        bool CreateArticle(ArticleData article);
+        void CreateArticle(Article article);
 
-        bool UpdateArticle(ArticleData article);
+        void UpdateArticle(Article article);
 
-        bool DeleteArticle(ArticleData article);
+        void DeleteArticle(int articleId);
     }
 }

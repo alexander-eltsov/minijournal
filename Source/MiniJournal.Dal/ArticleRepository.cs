@@ -1,72 +1,66 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Dapper;
-using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Dal
 {
     public class ArticleRepository : IArticleRepository
     {
-        private IConnectionFactory ConnectionFactory { get; }
+        private readonly IConnectionFactory connectionFactory;
 
         public ArticleRepository(IConnectionFactory connectionFactory)
         {
-            ConnectionFactory = connectionFactory;
+            this.connectionFactory = connectionFactory;
         }
 
-        public IEnumerable<ArticleData> GetArticles()
+        public IList<Article> GetArticles()
         {
             string sql = "SELECT * FROM Articles";
 
-            using (var connection = ConnectionFactory.Create())
+            using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                List<ArticleData> articles = connection.Query<ArticleData>(sql).ToList();
+                List<Article> articles = connection.Query<Article>(sql).ToList();
 
                 return articles;
             }
         }
 
-        public bool CreateArticle(ArticleData article)
+        public void CreateArticle(Article article)
         {
             string sql = "INSERT INTO Articles([Caption], [Text]) VALUES (@Caption, @Text)";
 
-            using (var connection = ConnectionFactory.Create())
+            using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                var affectedRows = connection.Execute(sql, article);
-
-                return affectedRows > 0;
+                connection.Execute(sql, article);
             }
         }
 
-        public bool UpdateArticle(ArticleData article)
+        public void UpdateArticle(Article article)
         {
             string sql = "UPDATE Articles SET [Caption] = @Caption, [Text] = @Text WHERE [Id] = @Id";
 
-            using (var connection = ConnectionFactory.Create())
+            using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                var affectedRows = connection.Execute(sql, article);
-
-                return affectedRows > 0;
+                connection.Execute(sql, article);
             }
         }
 
-        public bool DeleteArticle(ArticleData article)
+        public void DeleteArticle(int articleId)
         {
             string sql = "DELETE FROM Articles WHERE [Id] = @Id";
 
-            using (var connection = ConnectionFactory.Create())
+            using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                var affectedRows = connection.Execute(sql, article);
-
-                return affectedRows > 0;
+                connection.Execute(sql, new { Id = articleId});
             }
         }
     }

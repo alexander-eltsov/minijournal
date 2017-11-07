@@ -24,6 +24,22 @@ namespace Infotecs.MiniJournal.Service
                 host.AddDependencyInjectionBehavior<IArticleService>(container);
 
                 host.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpGetUrl = address });
+
+                // include exception details
+                ServiceDebugBehavior debug = host.Description.Behaviors.Find<ServiceDebugBehavior>();
+                if (debug == null)
+                {
+                    host.Description.Behaviors.Add(
+                        new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
+                }
+                else
+                {
+                    if (!debug.IncludeExceptionDetailInFaults)
+                    {
+                        debug.IncludeExceptionDetailInFaults = true;
+                    }
+                }
+
                 host.Open();
 
                 Console.WriteLine("The host has been opened.");

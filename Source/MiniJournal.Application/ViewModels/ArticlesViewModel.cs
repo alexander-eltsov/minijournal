@@ -67,7 +67,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
             catch (EndpointNotFoundException exception)
             {
-                logger.LogError(exception.ToString());
+                logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
             }
 
@@ -85,22 +85,17 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 Text = string.Empty
             };
 
-            bool articleCreated = false;
-
             try
             {
-                articleCreated = articleService.CreateArticle(newArticle);
+                articleService.CreateArticle(newArticle);
             }
             catch (EndpointNotFoundException exception)
             {
-                logger.LogError(exception.ToString());
+                logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
             }
 
-            if (articleCreated)
-            {
-                Articles.Add(newArticle);
-            }
+            Articles.Add(newArticle);
         }
 
         private void SaveSelectedArticle()
@@ -111,28 +106,24 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
             catch (EndpointNotFoundException exception)
             {
-                logger.LogError(exception.ToString());
+                logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
             }
         }
 
         private void DeleteSelectedArticle()
         {
-            bool articleDeleted = false;
             try
             {
-                articleDeleted = articleService.DeleteArticle(SelectedArticle);
+                articleService.DeleteArticle(SelectedArticle.Id);
             }
             catch (EndpointNotFoundException exception)
             {
-                logger.LogError(exception.ToString());
+                logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
             }
 
-            if (articleDeleted)
-            {
-                LoadArticles();
-            }
+            LoadArticles();
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Infotecs.MiniJournal.Contracts
         IEnumerable<ArticleData> GetAllArticles();
 
         [OperationContract]
-        bool CreateArticle(ArticleData article);
+        void CreateArticle(ArticleData article);
 
         [OperationContract]
-        bool UpdateArticle(ArticleData article);
+        void UpdateArticle(ArticleData article);
 
         [OperationContract]
-        bool DeleteArticle(ArticleData article);
+        void DeleteArticle(int articleId);
     }
 }

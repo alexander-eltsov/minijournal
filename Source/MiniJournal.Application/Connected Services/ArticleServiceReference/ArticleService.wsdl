@@ -24,9 +24,7 @@
       </xs:element>
       <xs:element name="CreateArticleResponse">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" name="CreateArticleResult" type="xs:boolean" />
-          </xs:sequence>
+          <xs:sequence />
         </xs:complexType>
       </xs:element>
       <xs:element name="UpdateArticle">
@@ -38,23 +36,19 @@
       </xs:element>
       <xs:element name="UpdateArticleResponse">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" name="UpdateArticleResult" type="xs:boolean" />
-          </xs:sequence>
+          <xs:sequence />
         </xs:complexType>
       </xs:element>
       <xs:element name="DeleteArticle">
         <xs:complexType>
           <xs:sequence>
-            <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q4:ArticleData" />
+            <xs:element minOccurs="0" name="articleId" type="xs:int" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="DeleteArticleResponse">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" name="DeleteArticleResult" type="xs:boolean" />
-          </xs:sequence>
+          <xs:sequence />
         </xs:complexType>
       </xs:element>
     </xs:schema>

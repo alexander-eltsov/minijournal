@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Autofac;
+using Autofac.Extras.Moq;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
+using Infotecs.MiniJournal.Models;
 using Moq;
 using NUnit.Framework;
 
@@ -10,71 +12,76 @@ namespace Infotecs.MiniJournal.Service.Tests
     public class ArticleServiceTests
     {
         [Test]
-        public void Constructor_NullArticleRepositoryProvided_ThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var sut = new ArticleService(null);
-            });
-        }
-
-        [Test]
         public void GetAllArticles_InvokesArticleRepositoryGetArticles()
         {
-            var mockRepository = new Mock<IArticleRepository>();
-            var sut = new ArticleService(mockRepository.Object);
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var mockRepository = new Mock<IArticleRepository>();
+                var sut = autoMock.Create<ArticleService>(TypedParameter.From(mockRepository.Object));
 
-            sut.GetAllArticles();
+                sut.GetAllArticles();
 
-            mockRepository.Verify(repository => repository.GetArticles(), Times.AtLeastOnce());
+                mockRepository.Verify(repository => repository.GetArticles(), Times.AtLeastOnce());
+            }
+
         }
 
         [Test]
         public void CreateArticle_InvokesArticleRepositoryCreateArticle()
         {
-            var mockRepository = new Mock<IArticleRepository>();
-            var sut = new ArticleService(mockRepository.Object);
-            var newArticle = new ArticleData
+            using (var autoMock = AutoMock.GetLoose())
             {
-                Caption = "Fake Article",
-                Text = string.Empty
-            };
+                var mockRepository = new Mock<IArticleRepository>();
+                var sut = autoMock.Create<ArticleService>(TypedParameter.From(mockRepository.Object));
+                var newArticle = new ArticleData
+                {
+                    Caption = "Fake Article",
+                    Text = string.Empty
+                };
 
-            sut.CreateArticle(newArticle);
+                sut.CreateArticle(newArticle);
 
-            mockRepository.Verify(repository => repository.CreateArticle(newArticle), Times.AtLeastOnce());
+                mockRepository.Verify(repository => repository.CreateArticle(It.IsAny<Article>()), Times.AtLeastOnce());
+            }
         }
 
         [Test]
         public void UpdateArticle_InvokesArticleRepositoryUpdateArticle()
         {
-            var mockRepository = new Mock<IArticleRepository>();
-            var sut = new ArticleService(mockRepository.Object);
-            var article = new ArticleData
+            using (var autoMock = AutoMock.GetLoose())
             {
-                Caption = "Fake Article",
-                Text = string.Empty
-            };
+                var mockRepository = new Mock<IArticleRepository>();
+                var sut = autoMock.Create<ArticleService>(TypedParameter.From(mockRepository.Object));
+                var article = new ArticleData
+                {
+                    Caption = "Fake Article",
+                    Text = string.Empty
+                };
 
-            sut.UpdateArticle(article);
+                sut.UpdateArticle(article);
 
-            mockRepository.Verify(repository => repository.UpdateArticle(article), Times.AtLeastOnce());
+                mockRepository.Verify(repository => repository.UpdateArticle(It.IsAny<Article>()), Times.AtLeastOnce());
+            }
         }
 
         [Test]
         public void DeleteArticle_InvokesArticleRepositoryDeleteArticle()
         {
-            var mockRepository = new Mock<IArticleRepository>();
-            var sut = new ArticleService(mockRepository.Object);
-            var article = new ArticleData
+            using (var autoMock = AutoMock.GetLoose())
             {
-                Caption = "Fake Article",
-                Text = string.Empty
-            };
+                var mockRepository = new Mock<IArticleRepository>();
+                var sut = autoMock.Create<ArticleService>(TypedParameter.From(mockRepository.Object));
+                var article = new ArticleData
+                {
+                    Id = 1,
+                    Caption = "Fake Article",
+                    Text = string.Empty
+                };
 
-            sut.DeleteArticle(article);
+                sut.DeleteArticle(article.Id);
 
-            mockRepository.Verify(repository => repository.DeleteArticle(article), Times.AtLeastOnce());
+                mockRepository.Verify(repository => repository.DeleteArticle(It.IsAny<int>()), Times.AtLeastOnce());
+            }
         }
     }
 }

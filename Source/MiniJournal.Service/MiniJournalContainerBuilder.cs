@@ -12,6 +12,8 @@ namespace Infotecs.MiniJournal.Service
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<MiniJournalMapper>().As<IMapper>();
+
             builder.Register(context =>
             {
                 var connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;

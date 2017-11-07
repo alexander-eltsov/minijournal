@@ -1,4 +1,5 @@
-﻿using Infotecs.Opus;
+﻿using System;
+using Infotecs.Opus;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -48,6 +49,11 @@ namespace Infotecs.MiniJournal.Application
         public void LogError(string error)
         {
             logger.Error(error);
+        }
+
+        public void LogError(Exception exception)
+        {
+            logger.Error(exception);
         }
     }
 }
