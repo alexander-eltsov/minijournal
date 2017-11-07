@@ -9,20 +9,12 @@ CREATE TABLE [dbo].[Articles](
 )
 GO
 
-CREATE TABLE [dbo].[Users](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nvarchar](64) NOT NULL,
-	PRIMARY KEY (ID),
-)
-GO
-
 CREATE TABLE [dbo].[Comments] (
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Text] nvarchar(512) NOT NULL,
 	[ArticleID] int,
-	[UserID] int,
+	[User] [nvarchar](128) NOT NULL,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (ArticleID) REFERENCES Articles(ID),
-	FOREIGN KEY (UserID) REFERENCES Users(ID)
+	FOREIGN KEY (ArticleID) REFERENCES Articles(ID)
 );
 GO
