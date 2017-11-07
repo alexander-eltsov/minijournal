@@ -8,7 +8,10 @@ namespace Infotecs.MiniJournal.Contracts
     public interface IArticleService
     {
         [OperationContract]
-        IEnumerable<ArticleData> GetAllArticles();
+        IEnumerable<HeaderData> GetArticleHeaders();
+
+        [OperationContract]
+        ArticleData LoadArticle(int articleId);
 
         [OperationContract]
         void CreateArticle(ArticleData article);

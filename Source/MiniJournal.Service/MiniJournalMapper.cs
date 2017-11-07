@@ -15,10 +15,11 @@ namespace Infotecs.MiniJournal.Service
             return AutoMapper.Mapper.Map<TSource, TDestination>(source);
         }
 
-        private void RegisterMappings()
+        private static void RegisterMappings()
         {
             AutoMapper.Mapper.CreateMap<ArticleData, Article>();
             AutoMapper.Mapper.CreateMap<Article, ArticleData>();
+            AutoMapper.Mapper.CreateMap<Article, HeaderData>();
         }
     }
 }

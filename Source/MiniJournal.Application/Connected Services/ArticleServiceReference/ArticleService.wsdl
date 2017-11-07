@@ -3,22 +3,36 @@
   <wsdl:types>
     <xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
       <xs:import namespace="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" />
-      <xs:element name="GetAllArticles">
+      <xs:element name="GetArticleHeaders">
         <xs:complexType>
           <xs:sequence />
         </xs:complexType>
       </xs:element>
-      <xs:element name="GetAllArticlesResponse">
+      <xs:element name="GetArticleHeadersResponse">
         <xs:complexType>
           <xs:sequence>
-            <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="GetAllArticlesResult" nillable="true" type="q1:ArrayOfArticleData" />
+            <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="GetArticleHeadersResult" nillable="true" type="q1:ArrayOfHeaderData" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="LoadArticle">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="articleId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="LoadArticleResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="LoadArticleResult" nillable="true" type="q2:ArticleData" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="CreateArticle">
         <xs:complexType>
           <xs:sequence>
-            <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q2:ArticleData" />
+            <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q3:ArticleData" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -30,7 +44,7 @@
       <xs:element name="UpdateArticle">
         <xs:complexType>
           <xs:sequence>
-            <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q3:ArticleData" />
+            <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="article" nillable="true" type="q4:ArticleData" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -94,12 +108,19 @@
       <xs:attribute name="Ref" type="xs:IDREF" />
     </xs:schema>
     <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-      <xs:complexType name="ArrayOfArticleData">
+      <xs:complexType name="ArrayOfHeaderData">
         <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" name="ArticleData" nillable="true" type="tns:ArticleData" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="HeaderData" nillable="true" type="tns:HeaderData" />
         </xs:sequence>
       </xs:complexType>
-      <xs:element name="ArrayOfArticleData" nillable="true" type="tns:ArrayOfArticleData" />
+      <xs:element name="ArrayOfHeaderData" nillable="true" type="tns:ArrayOfHeaderData" />
+      <xs:complexType name="HeaderData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Caption" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Id" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="HeaderData" nillable="true" type="tns:HeaderData" />
       <xs:complexType name="ArticleData">
         <xs:sequence>
           <xs:element minOccurs="0" name="Caption" nillable="true" type="xs:string" />
@@ -110,11 +131,17 @@
       <xs:element name="ArticleData" nillable="true" type="tns:ArticleData" />
     </xs:schema>
   </wsdl:types>
-  <wsdl:message name="IArticleService_GetAllArticles_InputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllArticles" />
+  <wsdl:message name="IArticleService_GetArticleHeaders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetArticleHeaders" />
   </wsdl:message>
-  <wsdl:message name="IArticleService_GetAllArticles_OutputMessage">
-    <wsdl:part name="parameters" element="tns:GetAllArticlesResponse" />
+  <wsdl:message name="IArticleService_GetArticleHeaders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetArticleHeadersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_LoadArticle_InputMessage">
+    <wsdl:part name="parameters" element="tns:LoadArticle" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_LoadArticle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LoadArticleResponse" />
   </wsdl:message>
   <wsdl:message name="IArticleService_CreateArticle_InputMessage">
     <wsdl:part name="parameters" element="tns:CreateArticle" />
@@ -135,9 +162,13 @@
     <wsdl:part name="parameters" element="tns:DeleteArticleResponse" />
   </wsdl:message>
   <wsdl:portType name="IArticleService">
-    <wsdl:operation name="GetAllArticles">
-      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetAllArticles" message="tns:IArticleService_GetAllArticles_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/GetAllArticlesResponse" message="tns:IArticleService_GetAllArticles_OutputMessage" />
+    <wsdl:operation name="GetArticleHeaders">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetArticleHeaders" message="tns:IArticleService_GetArticleHeaders_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/GetArticleHeadersResponse" message="tns:IArticleService_GetArticleHeaders_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LoadArticle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/LoadArticle" message="tns:IArticleService_LoadArticle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/LoadArticleResponse" message="tns:IArticleService_LoadArticle_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="CreateArticle">
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/CreateArticle" message="tns:IArticleService_CreateArticle_InputMessage" />
@@ -154,8 +185,17 @@
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IArticleService" type="tns:IArticleService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="GetAllArticles">
-      <soap:operation soapAction="http://tempuri.org/IArticleService/GetAllArticles" style="document" />
+    <wsdl:operation name="GetArticleHeaders">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/GetArticleHeaders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoadArticle">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/LoadArticle" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

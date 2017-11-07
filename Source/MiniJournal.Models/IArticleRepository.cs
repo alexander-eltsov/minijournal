@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using Infotecs.MiniJournal.Models;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Infotecs.MiniJournal.Dal
+namespace Infotecs.MiniJournal.Models
 {
     public interface IArticleRepository
     {
         IList<Article> GetArticles();
+
+        Article FindArticle(int articleId);
 
         void CreateArticle(Article article);
 

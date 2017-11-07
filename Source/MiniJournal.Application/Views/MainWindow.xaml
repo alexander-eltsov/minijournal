@@ -18,7 +18,7 @@
 
     <DockPanel Margin="10">
         <ToolBar DockPanel.Dock="Top">
-            <Button Command="{Binding LoadArticlesCommand}">Load</Button>
+            <Button Command="{Binding LoadHeadersCommand}">Load</Button>
             <Button Command="{Binding AddArticleCommand}">New</Button>
             <Separator></Separator>
             <Button Command="{Binding SaveArticleCommand}" Visibility="{Binding CanModifyArticle, Converter={StaticResource VisibilityConverter}}">Save</Button>
@@ -32,18 +32,18 @@
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <ListBox ItemsSource="{Binding Articles}" SelectedItem="{Binding SelectedArticle}" Grid.Row="0" Grid.Column="0">
+            <ListBox ItemsSource="{Binding Headers}" SelectedItem="{Binding SelectedHeader}" Grid.Row="0" Grid.Column="0">
                 <ListBox.Resources>
-                    <DataTemplate DataType="{x:Type models:ArticleData}">
+                    <DataTemplate DataType="{x:Type models:HeaderData}">
                         <Label Content="{Binding Caption}"></Label>
                     </DataTemplate>
                 </ListBox.Resources>
             </ListBox>
             <StackPanel Margin="10 0 0 0" Grid.Row="0" Grid.Column="1">
                 <Label>Caption</Label>
-                <TextBox Text="{Binding SelectedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Text="{Binding LoadedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                 <Label>Text</Label>
-                <TextBox TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding SelectedArticle.Text, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding LoadedArticle.Text, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </Grid>
     </DockPanel>

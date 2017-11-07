@@ -28,6 +28,22 @@ namespace Infotecs.MiniJournal.Dal
             }
         }
 
+        public Article FindArticle(int articleId)
+        {
+            string sql = "SELECT * FROM Articles WHERE [Id] = @Id";
+
+            using (var connection = connectionFactory.Create())
+            {
+                connection.Open();
+
+                Article article = connection
+                    .Query<Article>(sql, new { Id = articleId })
+                    .SingleOrDefault();
+
+                return article;
+            }
+        }
+
         public void CreateArticle(Article article)
         {
             string sql = "INSERT INTO Articles([Caption], [Text]) VALUES (@Caption, @Text)";

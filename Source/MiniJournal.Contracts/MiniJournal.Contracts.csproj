@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleData.cs" />
+    <Compile Include="HeaderData.cs" />
     <Compile Include="IArticleService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

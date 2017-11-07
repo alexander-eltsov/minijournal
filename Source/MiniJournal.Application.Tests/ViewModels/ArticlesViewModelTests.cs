@@ -12,59 +12,53 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
     public class ArticlesViewModelTests
     {
         [Test]
-        public void LoadArticlesCommand_WhenExecuted_FillsArticles()
+        public void LoadHeadersCommand_WhenExecuted_FillsHeaders()
         {
             using (var autoMock = AutoMock.GetLoose())
             {
                 var moqArticleService = new Mock<IArticleService>();
                 moqArticleService
-                    .Setup(service => service.GetAllArticles())
-                    .Returns(() =>
+                    .Setup(service => service.GetArticleHeaders())
+                    .Returns(() => new HeaderData[1]
                     {
-                        return new ArticleData[1]
+                        new HeaderData
                         {
-                            new ArticleData
-                            {
-                                Caption = "Fake Article",
-                                Text = string.Empty
-                            }
-                        };
+                            Id = 1,
+                            Caption = "Fake Article"
+                        }
                     });
                 var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
-                sut.LoadArticlesCommand.Execute(null);
+                sut.LoadHeadersCommand.Execute(null);
 
-                Assert.AreEqual(1, sut.Articles.Count);
-                Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+                Assert.AreEqual(1, sut.Headers.Count);
+                Assert.AreEqual("Fake Article", sut.Headers.ToArray()[0].Caption);
             }
         }
 
         [Test]
-        public void LoadArticlesCommand_ClearsArticlesBeforeFill()
+        public void LoadHeadersCommand_ClearsHeadersBeforeFill()
         {
             using (var autoMock = AutoMock.GetLoose())
             {
                 var moqArticleService = new Mock<IArticleService>();
                 moqArticleService
-                    .Setup(service => service.GetAllArticles())
-                    .Returns(() =>
+                    .Setup(service => service.GetArticleHeaders())
+                    .Returns(() => new HeaderData[1]
                     {
-                        return new ArticleData[1]
+                        new HeaderData
                         {
-                            new ArticleData
-                            {
-                                Caption = "Fake Article",
-                                Text = string.Empty
-                            }
-                        };
+                            Id = 1,
+                            Caption = "Fake Article"
+                        }
                     });
                 var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
-                sut.LoadArticlesCommand.Execute(null);
-                sut.LoadArticlesCommand.Execute(null);
+                sut.LoadHeadersCommand.Execute(null);
+                sut.LoadHeadersCommand.Execute(null);
 
-                Assert.AreEqual(1, sut.Articles.Count);
-                Assert.AreEqual("Fake Article", sut.Articles.ToArray()[0].Caption);
+                Assert.AreEqual(1, sut.Headers.Count);
+                Assert.AreEqual("Fake Article", sut.Headers.ToArray()[0].Caption);
             }
         }
     }

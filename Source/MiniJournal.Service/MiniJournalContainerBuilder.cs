@@ -3,6 +3,7 @@ using System.Configuration;
 using Autofac;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
+using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Service
 {

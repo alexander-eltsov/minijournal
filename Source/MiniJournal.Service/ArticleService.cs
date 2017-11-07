@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FluentValidation;
 using Infotecs.MiniJournal.Contracts;
-using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
+using Infotecs.MiniJournal.Service.Validators;
 
 namespace Infotecs.MiniJournal.Service
 {
@@ -10,6 +12,7 @@ namespace Infotecs.MiniJournal.Service
     {
         private readonly IArticleRepository articleRepository;
         private readonly IMapper mapper;
+        private readonly AbstractValidator<Article> articleValidator;
 
         public ArticleService(
             IArticleRepository articleRepository,
@@ -22,25 +25,47 @@ namespace Infotecs.MiniJournal.Service
 
             this.articleRepository = articleRepository;
             this.mapper = mapper;
+            this.articleValidator = new ArticleValidator()
+                .ChainValidator(new ArticleIsUniqueValidator(articleRepository));
         }
 
-        public IEnumerable<ArticleData> GetAllArticles()
+        public IEnumerable<HeaderData> GetArticleHeaders()
         {
             IList<Article> articles = articleRepository.GetArticles();
-            IEnumerable<ArticleData> articleDatas = mapper.Map<IList<Article>, IEnumerable<ArticleData>>(articles);
+            IEnumerable<HeaderData> headerDatas = mapper.Map<IList<Article>, IEnumerable<HeaderData>>(articles);
 
-            return articleDatas;
+            return headerDatas;
+        }
+
+        public ArticleData LoadArticle(int articleId)
+        {
+            var article = articleRepository.FindArticle(articleId);
+            var articleData = mapper.Map<Article, ArticleData>(article);
+
+            return articleData;
         }
 
         public void CreateArticle(ArticleData article)
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
+            var validationResult = articleValidator.Validate(articleModel);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.ToString());
+            }
+
             articleRepository.CreateArticle(articleModel);
         }
 
         public void UpdateArticle(ArticleData article)
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
+            var validationResult = articleValidator.Validate(articleModel);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
+            }
+
             articleRepository.UpdateArticle(articleModel);
         }
 

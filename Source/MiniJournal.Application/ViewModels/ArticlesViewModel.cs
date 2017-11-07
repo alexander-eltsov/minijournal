@@ -12,7 +12,8 @@ namespace Infotecs.MiniJournal.Application.ViewModels
     {
         private readonly IArticleService articleService;
         private readonly ILogger logger;
-        private ArticleData selectedArticle;
+        private HeaderData selectedHeader;
+        private ArticleData loadedArticle;
 
         public ArticlesViewModel(
             IArticleService articleService,
@@ -25,30 +26,43 @@ namespace Infotecs.MiniJournal.Application.ViewModels
 
             this.articleService = articleService;
             this.logger = logger;
-            Articles = new ObservableCollection<ArticleData>();
+            Headers = new ObservableCollection<HeaderData>();
 
-            LoadArticlesCommand = new RelayCommand(parameter => LoadArticles());
+            LoadHeadersCommand = new RelayCommand(parameter => LoadHeaders());
             AddArticleCommand = new RelayCommand(parameter => AddArticle());
             SaveArticleCommand = new RelayCommand(parameter => SaveSelectedArticle());
             DeleteArticleCommand = new RelayCommand(parameter => DeleteSelectedArticle());
         }
 
-        public bool CanModifyArticle => SelectedArticle != null;
+        public bool CanModifyArticle => SelectedHeader != null;
 
-        public ICollection<ArticleData> Articles { get; }
+        public ICollection<HeaderData> Headers { get; }
 
-        public ArticleData SelectedArticle
+        public HeaderData SelectedHeader
         {
-            get => selectedArticle;
+            get => selectedHeader;
             set
             {
-                selectedArticle = value; 
+                selectedHeader = value; 
+                OnPropertyChanged();
+
+                LoadedArticle = articleService.LoadArticle(selectedHeader.Id);
+            }
+        }
+
+        public ArticleData LoadedArticle
+        {
+            get => loadedArticle;
+            set
+            {
+                loadedArticle = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CanModifyArticle));
             }
         }
 
-        public ICommand LoadArticlesCommand { get; }
+
+        public ICommand LoadHeadersCommand { get; }
 
         public ICommand AddArticleCommand { get; }
 
@@ -56,14 +70,14 @@ namespace Infotecs.MiniJournal.Application.ViewModels
 
         public ICommand DeleteArticleCommand { get; }
 
-        private void LoadArticles()
+        private void LoadHeaders()
         {
-            Articles.Clear();
-            var articlesFromService = new ArticleData[0];
+            Headers.Clear();
+            var headersFromService = new HeaderData[0];
 
             try
             {
-                articlesFromService = articleService.GetAllArticles();
+                headersFromService = articleService.GetArticleHeaders();
             }
             catch (EndpointNotFoundException exception)
             {
@@ -71,9 +85,9 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 // TODO: inform user, consider using some IDialogService
             }
 
-            foreach (ArticleData articleData in articlesFromService)
+            foreach (HeaderData header in headersFromService)
             {
-                Articles.Add(articleData);
+                Headers.Add(header);
             }
         }
 
@@ -81,7 +95,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
         {
             var newArticle = new ArticleData
             {
-                Caption = "New Article",
+                Caption = $"New Article {Headers.Count + 1}",
                 Text = string.Empty
             };
 
@@ -95,27 +109,29 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 // TODO: inform user, consider using some IDialogService
             }
 
-            Articles.Add(newArticle);
+            LoadHeaders();
         }
 
         private void SaveSelectedArticle()
         {
             try
             {
-                articleService.UpdateArticle(SelectedArticle);
+                articleService.UpdateArticle(LoadedArticle);
             }
-            catch (EndpointNotFoundException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
             }
+
+            LoadHeaders();
         }
 
         private void DeleteSelectedArticle()
         {
             try
             {
-                articleService.DeleteArticle(SelectedArticle.Id);
+                articleService.DeleteArticle(LoadedArticle.Id);
             }
             catch (EndpointNotFoundException exception)
             {
@@ -123,7 +139,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 // TODO: inform user, consider using some IDialogService
             }
 
-            LoadArticles();
+            LoadHeaders();
         }
     }
 }
