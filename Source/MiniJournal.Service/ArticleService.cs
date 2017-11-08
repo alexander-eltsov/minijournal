@@ -14,6 +14,7 @@ namespace Infotecs.MiniJournal.Service
         private readonly IArticleRepository articleRepository;
         private readonly IMapper mapper;
         private readonly AbstractValidator<Article> articleValidator;
+        private readonly AbstractValidator<Comment> commentValidator;
 
         public ArticleService(
             IArticleRepository articleRepository,
@@ -26,8 +27,10 @@ namespace Infotecs.MiniJournal.Service
 
             this.articleRepository = articleRepository;
             this.mapper = mapper;
-            this.articleValidator = new ArticleValidator()
+
+            articleValidator = new ArticleValidator()
                 .ChainValidator(new ArticleIsUniqueValidator(articleRepository));
+            commentValidator = new CommentValidator();
         }
 
         public IEnumerable<HeaderData> GetArticleHeaders()
@@ -57,7 +60,7 @@ namespace Infotecs.MiniJournal.Service
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
             ValidateArticle(articleModel);
-            articleRepository.UpdateArticle(articleModel);
+            articleRepository.UpdateArticle(articleModel, updateComments: false);
         }
 
         public void DeleteArticle(int articleId)
@@ -65,9 +68,44 @@ namespace Infotecs.MiniJournal.Service
             articleRepository.DeleteArticle(articleId);
         }
 
+        public void AddComment(int articleId, CommentData comment)
+        {
+            var article = articleRepository.GetArticle(articleId);
+            var commentModel = mapper.Map<CommentData, Comment>(comment);
+
+            ValidateComment(commentModel);
+            article.Comments.Add(commentModel);
+
+            articleRepository.UpdateArticle(article);
+        }
+
+        public void RemoveComment(int articleId, int commentId)
+        {
+            var article = articleRepository.GetArticle(articleId);
+
+            IEnumerable<Comment> commentsToDelete = article.Comments
+                .Where(comment => comment.Id == commentId)
+                .ToArray();
+            foreach (Comment comment in commentsToDelete)
+            {
+                article.Comments.Remove(comment);
+            }
+
+            articleRepository.UpdateArticle(article);
+        }
+
         protected virtual void ValidateArticle(Article article)
         {
             var validationResult = articleValidator.Validate(article);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
+            }
+        }
+
+        protected virtual void ValidateComment(Comment comment)
+        {
+            var validationResult = commentValidator.Validate(comment);
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors.Single().ErrorMessage);

@@ -7,7 +7,7 @@
         xmlns:models="clr-namespace:Infotecs.MiniJournal.Application.ArticleServiceReference"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:ArticlesViewModel}"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="539" Width="636">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
@@ -39,12 +39,31 @@
                     </DataTemplate>
                 </ListBox.Resources>
             </ListBox>
+            
+            <!-- Article card-->
             <StackPanel Margin="10 0 0 0" Grid.Row="0" Grid.Column="1">
+                
                 <Label>Caption</Label>
                 <TextBox Text="{Binding LoadedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                
                 <Label>Text</Label>
                 <TextBox TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding LoadedArticle.Text, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                
+                <Label>Comments</Label>
+                <ListBox ItemsSource="{Binding LoadedArticle.Comments}" SelectedItem="{Binding SelectedArticleComment}">
+                    <ListBox.Resources>
+                        <DataTemplate DataType="{x:Type models:CommentData}">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding User}"></Label>
+                                <Label Content="{Binding Text}"></Label>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
+                </ListBox>
+
+                <Button Command="{Binding DeleteCommentCommand}">Delete comment</Button>
             </StackPanel>
+            
         </Grid>
     </DockPanel>
 

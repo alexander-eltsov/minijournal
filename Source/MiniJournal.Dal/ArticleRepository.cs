@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Dapper;
 using Infotecs.MiniJournal.Models;
@@ -16,7 +17,7 @@ namespace Infotecs.MiniJournal.Dal
 
         public IList<Header> GetHeaders()
         {
-            string sql = "SELECT [Id], [Caption] FROM Articles";
+            string sql = "SELECT [ID], [Caption] FROM Articles";
 
             using (var connection = connectionFactory.Create())
             {
@@ -30,17 +31,55 @@ namespace Infotecs.MiniJournal.Dal
 
         public Article GetArticle(int articleId)
         {
-            string sql = "SELECT * FROM Articles WHERE [Id] = @Id";
+            string sql = @"
+                SELECT
+                    a.[ID] AS [ArticleID],
+                    a.[Caption],
+                    a.[Text],
+                    c.[ID] AS [CommentID],
+                    c.[Text] AS [CommentText],
+                    c.[User]
+                FROM
+                    Articles a
+                    LEFT OUTER JOIN Comments c ON a.[ID] = c.[ArticleID]
+                WHERE
+                    a.[ID] = @Id";
 
             using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                Article article = connection
-                    .Query<Article>(sql, new { Id = articleId })
-                    .SingleOrDefault();
+                Article fetchedArticle = null;
+                fetchedArticle = connection
+                    .Query<dynamic>(sql, new { Id = articleId })
+                    .Select(item =>
+                    {
+                        if (fetchedArticle == null)
+                        {
+                            fetchedArticle = new Article
+                            {
+                                Id = item.ArticleID,
+                                Caption = item.Caption,
+                                Text = item.Text
+                            };
+                        }
+                        if (item.CommentID != null)
+                        {
+                            var comment = new Comment()
+                            {
+                                Id = item.CommentID,
+                                Text = item.CommentText,
+                                User = item.User,
+                                Article = fetchedArticle
+                            };
+                            fetchedArticle.Comments.Add(comment);
+                        }
+                        return fetchedArticle;
+                    })
+                    .ToList()
+                    .FirstOrDefault();
 
-                return article;
+                return fetchedArticle;
             }
         }
 
@@ -56,21 +95,33 @@ namespace Infotecs.MiniJournal.Dal
             }
         }
 
-        public void UpdateArticle(Article article)
+        public void UpdateArticle(Article article, bool updateComments = true)
         {
-            string sql = "UPDATE Articles SET [Caption] = @Caption, [Text] = @Text WHERE [Id] = @Id";
+            string sql = @"
+                UPDATE
+                    Articles
+                SET
+                    [Caption] = @Caption,
+                    [Text] = @Text
+                WHERE
+                    [ID] = @Id";
 
             using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
                 connection.Execute(sql, article);
+
+                if (updateComments)
+                {
+                    UpdateArticleComments(connection, article);
+                }
             }
         }
 
         public void DeleteArticle(int articleId)
         {
-            string sql = "DELETE FROM Articles WHERE [Id] = @Id";
+            string sql = "DELETE FROM Articles WHERE [ID] = @Id";
 
             using (var connection = connectionFactory.Create())
             {
@@ -78,6 +129,42 @@ namespace Infotecs.MiniJournal.Dal
 
                 connection.Execute(sql, new { Id = articleId});
             }
+        }
+
+        private void UpdateArticleComments(IDbConnection connection, Article article)
+        {
+            // create comments
+            IEnumerable<Comment> newComments = article.Comments.Where(comment => comment.Id == 0);
+            foreach (Comment newComment in newComments)
+            {
+                CreateArticleComment(connection, newComment);
+            }
+
+            // delete comments
+            string deleteCommentsSql = @"
+                DELETE FROM
+                    Comments
+                WHERE
+                    [ArticleID] = @ArticleId";
+            int[] existingCommentIds = article.Comments
+                .Where(comment => comment.Id != 0)
+                .Select(comment => comment.Id)
+                .ToArray();
+            if (existingCommentIds.Length > 0)
+            {
+                deleteCommentsSql += $" AND [ID] NOT IN ({ string.Join(",", existingCommentIds)})";
+            }
+            connection.Execute(deleteCommentsSql, new { ArticleId = article.Id });
+        }
+
+        private void CreateArticleComment(IDbConnection connection, Comment comment)
+        {
+            string sql = @"
+                INSERT INTO
+                    Comments ([Text], [ArticleID], [User])
+                VALUES
+                    (@Text, @ArticleID, @User)";
+            connection.Execute(sql, comment);
         }
     }
 }

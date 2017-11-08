@@ -65,6 +65,32 @@
           <xs:sequence />
         </xs:complexType>
       </xs:element>
+      <xs:element name="AddComment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="articleId" type="xs:int" />
+            <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="comment" nillable="true" type="q5:CommentData" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AddCommentResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveComment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="articleId" type="xs:int" />
+            <xs:element minOccurs="0" name="commentId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RemoveCommentResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
     </xs:schema>
     <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
       <xs:element name="anyType" nillable="true" type="xs:anyType" />
@@ -124,11 +150,26 @@
       <xs:complexType name="ArticleData">
         <xs:sequence>
           <xs:element minOccurs="0" name="Caption" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Comments" nillable="true" type="tns:ArrayOfCommentData" />
           <xs:element minOccurs="0" name="Id" type="xs:int" />
           <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
         </xs:sequence>
       </xs:complexType>
       <xs:element name="ArticleData" nillable="true" type="tns:ArticleData" />
+      <xs:complexType name="ArrayOfCommentData">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="CommentData" nillable="true" type="tns:CommentData" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfCommentData" nillable="true" type="tns:ArrayOfCommentData" />
+      <xs:complexType name="CommentData">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Id" type="xs:int" />
+          <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="User" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CommentData" nillable="true" type="tns:CommentData" />
     </xs:schema>
   </wsdl:types>
   <wsdl:message name="IArticleService_GetArticleHeaders_InputMessage">
@@ -161,6 +202,18 @@
   <wsdl:message name="IArticleService_DeleteArticle_OutputMessage">
     <wsdl:part name="parameters" element="tns:DeleteArticleResponse" />
   </wsdl:message>
+  <wsdl:message name="IArticleService_AddComment_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddComment" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_AddComment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddCommentResponse" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_RemoveComment_InputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveComment" />
+  </wsdl:message>
+  <wsdl:message name="IArticleService_RemoveComment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RemoveCommentResponse" />
+  </wsdl:message>
   <wsdl:portType name="IArticleService">
     <wsdl:operation name="GetArticleHeaders">
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetArticleHeaders" message="tns:IArticleService_GetArticleHeaders_InputMessage" />
@@ -181,6 +234,14 @@
     <wsdl:operation name="DeleteArticle">
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/DeleteArticle" message="tns:IArticleService_DeleteArticle_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/DeleteArticleResponse" message="tns:IArticleService_DeleteArticle_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddComment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/AddComment" message="tns:IArticleService_AddComment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/AddCommentResponse" message="tns:IArticleService_AddComment_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RemoveComment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/RemoveComment" message="tns:IArticleService_RemoveComment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/RemoveCommentResponse" message="tns:IArticleService_RemoveComment_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IArticleService" type="tns:IArticleService">
@@ -223,6 +284,24 @@
     </wsdl:operation>
     <wsdl:operation name="DeleteArticle">
       <soap:operation soapAction="http://tempuri.org/IArticleService/DeleteArticle" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddComment">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/AddComment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveComment">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/RemoveComment" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

@@ -87,6 +87,9 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         private string CaptionField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData[] CommentsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -116,6 +119,19 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData[] Comments {
+            get {
+                return this.CommentsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CommentsField, value) != true)) {
+                    this.CommentsField = value;
+                    this.RaisePropertyChanged("Comments");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public int Id {
             get {
                 return this.IdField;
@@ -137,6 +153,83 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
                 if ((object.ReferenceEquals(this.TextField, value) != true)) {
                     this.TextField = value;
                     this.RaisePropertyChanged("Text");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CommentData", Namespace="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts")]
+    [System.SerializableAttribute()]
+    public partial class CommentData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string TextField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UserField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Id {
+            get {
+                return this.IdField;
+            }
+            set {
+                if ((this.IdField.Equals(value) != true)) {
+                    this.IdField = value;
+                    this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Text {
+            get {
+                return this.TextField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TextField, value) != true)) {
+                    this.TextField = value;
+                    this.RaisePropertyChanged("Text");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string User {
+            get {
+                return this.UserField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UserField, value) != true)) {
+                    this.UserField = value;
+                    this.RaisePropertyChanged("User");
                 }
             }
         }
@@ -184,6 +277,18 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/DeleteArticle", ReplyAction="http://tempuri.org/IArticleService/DeleteArticleResponse")]
         System.Threading.Tasks.Task DeleteArticleAsync(int articleId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/AddComment", ReplyAction="http://tempuri.org/IArticleService/AddCommentResponse")]
+        void AddComment(int articleId, Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData comment);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/AddComment", ReplyAction="http://tempuri.org/IArticleService/AddCommentResponse")]
+        System.Threading.Tasks.Task AddCommentAsync(int articleId, Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData comment);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/RemoveComment", ReplyAction="http://tempuri.org/IArticleService/RemoveCommentResponse")]
+        void RemoveComment(int articleId, int commentId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/RemoveComment", ReplyAction="http://tempuri.org/IArticleService/RemoveCommentResponse")]
+        System.Threading.Tasks.Task RemoveCommentAsync(int articleId, int commentId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -251,6 +356,22 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         
         public System.Threading.Tasks.Task DeleteArticleAsync(int articleId) {
             return base.Channel.DeleteArticleAsync(articleId);
+        }
+        
+        public void AddComment(int articleId, Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData comment) {
+            base.Channel.AddComment(articleId, comment);
+        }
+        
+        public System.Threading.Tasks.Task AddCommentAsync(int articleId, Infotecs.MiniJournal.Application.ArticleServiceReference.CommentData comment) {
+            return base.Channel.AddCommentAsync(articleId, comment);
+        }
+        
+        public void RemoveComment(int articleId, int commentId) {
+            base.Channel.RemoveComment(articleId, commentId);
+        }
+        
+        public System.Threading.Tasks.Task RemoveCommentAsync(int articleId, int commentId) {
+            return base.Channel.RemoveCommentAsync(articleId, commentId);
         }
     }
 }

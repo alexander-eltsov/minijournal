@@ -21,5 +21,11 @@ namespace Infotecs.MiniJournal.Contracts
 
         [OperationContract]
         void DeleteArticle(int articleId);
+
+        [OperationContract]
+        void AddComment(int articleId, CommentData comment);
+
+        [OperationContract]
+        void RemoveComment(int articleId, int commentId);
     }
 }

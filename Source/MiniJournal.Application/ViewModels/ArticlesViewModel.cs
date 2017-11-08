@@ -14,6 +14,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
         private readonly ILogger logger;
         private HeaderData selectedHeader;
         private ArticleData loadedArticle;
+        private CommentData selectedArticleComment;
 
         public ArticlesViewModel(
             IArticleService articleService,
@@ -32,6 +33,8 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             AddArticleCommand = new RelayCommand(parameter => AddArticle());
             SaveArticleCommand = new RelayCommand(parameter => SaveSelectedArticle());
             DeleteArticleCommand = new RelayCommand(parameter => DeleteSelectedArticle());
+            AddCommentCommand = new RelayCommand(parameter => AddComment());
+            DeleteCommentCommand = new RelayCommand(parameter => DeleteComment());
         }
 
         public bool CanModifyArticle => SelectedHeader != null;
@@ -63,6 +66,15 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
         }
 
+        public CommentData SelectedArticleComment
+        {
+            get => selectedArticleComment;
+            set
+            {
+                selectedArticleComment = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ICommand LoadHeadersCommand { get; }
 
@@ -71,6 +83,10 @@ namespace Infotecs.MiniJournal.Application.ViewModels
         public ICommand SaveArticleCommand { get; }
 
         public ICommand DeleteArticleCommand { get; }
+
+        public ICommand AddCommentCommand { get; }
+
+        public ICommand DeleteCommentCommand { get; }
 
         private void LoadHeaders()
         {
@@ -134,6 +150,26 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.DeleteArticle(LoadedArticle.Id);
+            }
+            catch (EndpointNotFoundException exception)
+            {
+                logger.LogError(exception);
+                // TODO: inform user, consider using some IDialogService
+            }
+
+            LoadHeaders();
+        }
+
+        private void AddComment()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeleteComment()
+        {
+            try
+            {
+                articleService.RemoveComment(LoadedArticle.Id, SelectedArticleComment.Id);
             }
             catch (EndpointNotFoundException exception)
             {
