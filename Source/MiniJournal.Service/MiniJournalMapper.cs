@@ -18,8 +18,9 @@ namespace Infotecs.MiniJournal.Service
         private static void RegisterMappings()
         {
             AutoMapper.Mapper.CreateMap<ArticleData, Article>();
+            AutoMapper.Mapper.CreateMap<HeaderData, Header>();
             AutoMapper.Mapper.CreateMap<Article, ArticleData>();
-            AutoMapper.Mapper.CreateMap<Article, HeaderData>();
+            AutoMapper.Mapper.CreateMap<Header, HeaderData>();
         }
     }
 }

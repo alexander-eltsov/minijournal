@@ -15,17 +15,17 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="LoadArticle">
+      <xs:element name="GetArticle">
         <xs:complexType>
           <xs:sequence>
             <xs:element minOccurs="0" name="articleId" type="xs:int" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="LoadArticleResponse">
+      <xs:element name="GetArticleResponse">
         <xs:complexType>
           <xs:sequence>
-            <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="LoadArticleResult" nillable="true" type="q2:ArticleData" />
+            <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Infotecs.MiniJournal.Contracts" minOccurs="0" name="GetArticleResult" nillable="true" type="q2:ArticleData" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -137,11 +137,11 @@
   <wsdl:message name="IArticleService_GetArticleHeaders_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetArticleHeadersResponse" />
   </wsdl:message>
-  <wsdl:message name="IArticleService_LoadArticle_InputMessage">
-    <wsdl:part name="parameters" element="tns:LoadArticle" />
+  <wsdl:message name="IArticleService_GetArticle_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetArticle" />
   </wsdl:message>
-  <wsdl:message name="IArticleService_LoadArticle_OutputMessage">
-    <wsdl:part name="parameters" element="tns:LoadArticleResponse" />
+  <wsdl:message name="IArticleService_GetArticle_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetArticleResponse" />
   </wsdl:message>
   <wsdl:message name="IArticleService_CreateArticle_InputMessage">
     <wsdl:part name="parameters" element="tns:CreateArticle" />
@@ -166,9 +166,9 @@
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetArticleHeaders" message="tns:IArticleService_GetArticleHeaders_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/GetArticleHeadersResponse" message="tns:IArticleService_GetArticleHeaders_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="LoadArticle">
-      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/LoadArticle" message="tns:IArticleService_LoadArticle_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/LoadArticleResponse" message="tns:IArticleService_LoadArticle_OutputMessage" />
+    <wsdl:operation name="GetArticle">
+      <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/GetArticle" message="tns:IArticleService_GetArticle_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IArticleService/GetArticleResponse" message="tns:IArticleService_GetArticle_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="CreateArticle">
       <wsdl:input wsaw:Action="http://tempuri.org/IArticleService/CreateArticle" message="tns:IArticleService_CreateArticle_InputMessage" />
@@ -194,8 +194,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="LoadArticle">
-      <soap:operation soapAction="http://tempuri.org/IArticleService/LoadArticle" style="document" />
+    <wsdl:operation name="GetArticle">
+      <soap:operation soapAction="http://tempuri.org/IArticleService/GetArticle" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentValidation;
+using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Service.Validators
@@ -21,7 +22,7 @@ namespace Infotecs.MiniJournal.Service.Validators
         private bool IsUniqueArticle(Article validatingArticle)
         {
             bool captionIsOccupied = articleRepository
-                .GetArticles()
+                .GetHeaders()
                 .Any(article => article.Id != validatingArticle.Id &&
                     article.Caption.Equals(validatingArticle.Caption, StringComparison.CurrentCultureIgnoreCase));
             return !captionIsOccupied;

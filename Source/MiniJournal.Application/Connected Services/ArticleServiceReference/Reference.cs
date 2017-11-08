@@ -161,11 +161,11 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/GetArticleHeaders", ReplyAction="http://tempuri.org/IArticleService/GetArticleHeadersResponse")]
         System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.HeaderData[]> GetArticleHeadersAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/LoadArticle", ReplyAction="http://tempuri.org/IArticleService/LoadArticleResponse")]
-        Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData LoadArticle(int articleId);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/GetArticle", ReplyAction="http://tempuri.org/IArticleService/GetArticleResponse")]
+        Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData GetArticle(int articleId);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/LoadArticle", ReplyAction="http://tempuri.org/IArticleService/LoadArticleResponse")]
-        System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData> LoadArticleAsync(int articleId);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/GetArticle", ReplyAction="http://tempuri.org/IArticleService/GetArticleResponse")]
+        System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData> GetArticleAsync(int articleId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IArticleService/CreateArticle", ReplyAction="http://tempuri.org/IArticleService/CreateArticleResponse")]
         void CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article);
@@ -221,12 +221,12 @@ namespace Infotecs.MiniJournal.Application.ArticleServiceReference {
             return base.Channel.GetArticleHeadersAsync();
         }
         
-        public Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData LoadArticle(int articleId) {
-            return base.Channel.LoadArticle(articleId);
+        public Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData GetArticle(int articleId) {
+            return base.Channel.GetArticle(articleId);
         }
         
-        public System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData> LoadArticleAsync(int articleId) {
-            return base.Channel.LoadArticleAsync(articleId);
+        public System.Threading.Tasks.Task<Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData> GetArticleAsync(int articleId) {
+            return base.Channel.GetArticleAsync(articleId);
         }
         
         public void CreateArticle(Infotecs.MiniJournal.Application.ArticleServiceReference.ArticleData article) {

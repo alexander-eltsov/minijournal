@@ -11,7 +11,7 @@ namespace Infotecs.MiniJournal.Contracts
         IEnumerable<HeaderData> GetArticleHeaders();
 
         [OperationContract]
-        ArticleData LoadArticle(int articleId);
+        ArticleData GetArticle(int articleId);
 
         [OperationContract]
         void CreateArticle(ArticleData article);

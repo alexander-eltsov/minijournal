@@ -1,4 +1,5 @@
 ﻿using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
 using Moq;
 using NUnit.Framework;
@@ -13,24 +14,38 @@ namespace Infotecs.MiniJournal.Service.Tests
             public FakeArticleService(IArticleRepository articleRepository) : base(articleRepository, new MiniJournalMapper())
             {
             }
+
+            public bool SupressArticleValidation { get; set; }
+
+            protected override void ValidateArticle(Article article)
+            {
+                if (SupressArticleValidation)
+                {
+                    return;
+                }
+                base.ValidateArticle(article);
+            }
         }
 
         [Test]
-        public void GetArticleHeaders_InvokesArticleRepositoryGetArticles()
+        public void GetArticleHeaders_InvokesArticleRepositoryGetHeaders()
         {
             var mockRepository = new Mock<IArticleRepository>();
             var sut = new FakeArticleService(mockRepository.Object);
 
             sut.GetArticleHeaders();
 
-            mockRepository.Verify(repository => repository.GetArticles(), Times.AtLeastOnce());
+            mockRepository.Verify(repository => repository.GetHeaders(), Times.AtLeastOnce());
         }
 
         [Test]
         public void CreateArticle_InvokesArticleRepositoryCreateArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object);
+            var sut = new FakeArticleService(mockRepository.Object)
+            {
+                SupressArticleValidation = true
+            };
             var newArticle = new ArticleData
             {
                 Caption = "Fake Article",
@@ -46,7 +61,10 @@ namespace Infotecs.MiniJournal.Service.Tests
         public void UpdateArticle_InvokesArticleRepositoryUpdateArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object);
+            var sut = new FakeArticleService(mockRepository.Object)
+            {
+                SupressArticleValidation = true
+            };
             var article = new ArticleData
             {
                 Caption = "Fake Article",
@@ -62,7 +80,10 @@ namespace Infotecs.MiniJournal.Service.Tests
         public void DeleteArticle_InvokesArticleRepositoryDeleteArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object);
+            var sut = new FakeArticleService(mockRepository.Object)
+            {
+                SupressArticleValidation = true
+            };
             var article = new ArticleData
             {
                 Id = 1,

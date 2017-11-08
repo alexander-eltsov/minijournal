@@ -46,7 +46,9 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 selectedHeader = value; 
                 OnPropertyChanged();
 
-                LoadedArticle = articleService.LoadArticle(selectedHeader.Id);
+                LoadedArticle = selectedHeader == null
+                    ? null
+                    : articleService.GetArticle(selectedHeader.Id);
             }
         }
 
@@ -79,7 +81,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 headersFromService = articleService.GetArticleHeaders();
             }
-            catch (EndpointNotFoundException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService
@@ -103,7 +105,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 articleService.CreateArticle(newArticle);
             }
-            catch (EndpointNotFoundException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception);
                 // TODO: inform user, consider using some IDialogService

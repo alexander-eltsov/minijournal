@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentValidation;
 using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
 using Infotecs.MiniJournal.Service.Validators;
 
@@ -31,15 +32,15 @@ namespace Infotecs.MiniJournal.Service
 
         public IEnumerable<HeaderData> GetArticleHeaders()
         {
-            IList<Article> articles = articleRepository.GetArticles();
-            IEnumerable<HeaderData> headerDatas = mapper.Map<IList<Article>, IEnumerable<HeaderData>>(articles);
+            IList<Header> headers = articleRepository.GetHeaders();
+            IEnumerable<HeaderData> headerDatas = mapper.Map<IList<Header>, IEnumerable<HeaderData>>(headers);
 
             return headerDatas;
         }
 
-        public ArticleData LoadArticle(int articleId)
+        public ArticleData GetArticle(int articleId)
         {
-            var article = articleRepository.FindArticle(articleId);
+            var article = articleRepository.GetArticle(articleId);
             var articleData = mapper.Map<Article, ArticleData>(article);
 
             return articleData;
@@ -48,30 +49,29 @@ namespace Infotecs.MiniJournal.Service
         public void CreateArticle(ArticleData article)
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
-            var validationResult = articleValidator.Validate(articleModel);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.ToString());
-            }
-
+            ValidateArticle(articleModel);
             articleRepository.CreateArticle(articleModel);
         }
 
         public void UpdateArticle(ArticleData article)
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
-            var validationResult = articleValidator.Validate(articleModel);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
-            }
-
+            ValidateArticle(articleModel);
             articleRepository.UpdateArticle(articleModel);
         }
 
         public void DeleteArticle(int articleId)
         {
             articleRepository.DeleteArticle(articleId);
+        }
+
+        protected virtual void ValidateArticle(Article article)
+        {
+            var validationResult = articleValidator.Validate(article);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
+            }
         }
     }
 }

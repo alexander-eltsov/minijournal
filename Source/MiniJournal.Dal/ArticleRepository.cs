@@ -14,21 +14,21 @@ namespace Infotecs.MiniJournal.Dal
             this.connectionFactory = connectionFactory;
         }
 
-        public IList<Article> GetArticles()
+        public IList<Header> GetHeaders()
         {
-            string sql = "SELECT * FROM Articles";
+            string sql = "SELECT [Id], [Caption] FROM Articles";
 
             using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                List<Article> articles = connection.Query<Article>(sql).ToList();
+                List<Header> headers = connection.Query<Header>(sql).ToList();
 
-                return articles;
+                return headers;
             }
         }
 
-        public Article FindArticle(int articleId)
+        public Article GetArticle(int articleId)
         {
             string sql = "SELECT * FROM Articles WHERE [Id] = @Id";
 
