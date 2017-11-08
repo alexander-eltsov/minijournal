@@ -15,6 +15,6 @@ CREATE TABLE [dbo].[Comments] (
 	[ArticleID] int,
 	[User] [nvarchar](128) NOT NULL,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (ArticleID) REFERENCES Articles(ID)
+	FOREIGN KEY (ArticleID) REFERENCES Articles(ID) ON DELETE CASCADE
 );
 GO

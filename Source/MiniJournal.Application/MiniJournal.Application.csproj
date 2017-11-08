@@ -62,11 +62,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ApplicationContainerBuilder.cs" />
+    <Compile Include="AutofacContainerBuilder.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="INotificationService.cs" />
+    <Compile Include="MiniJournalDependencyResolver.cs" />
+    <Compile Include="IDependencyResolver.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="Views\AddCommentViewDialog.cs" />
+    <Compile Include="Views\IDialogView.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ViewModels\ArticlesViewModel.cs" />
+    <Page Include="Views\AddCommentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +90,10 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\AddCommentViewModel.cs" />
+    <Compile Include="Views\AddCommentView.xaml.cs">
+      <DependentUpon>AddCommentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

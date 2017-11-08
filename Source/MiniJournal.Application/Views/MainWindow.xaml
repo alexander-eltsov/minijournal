@@ -61,7 +61,11 @@
                     </ListBox.Resources>
                 </ListBox>
 
-                <Button Command="{Binding DeleteCommentCommand}">Delete comment</Button>
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding AddCommentCommand}">Add comment</Button>
+                    <Button Command="{Binding DeleteCommentCommand}">Delete comment</Button>
+                </StackPanel>
+                
             </StackPanel>
             
         </Grid>

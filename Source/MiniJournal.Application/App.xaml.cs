@@ -13,15 +13,14 @@ namespace Infotecs.MiniJournal.Application
         {
             base.OnStartup(e);
 
-            var containerBuilder = new ApplicationContainerBuilder();
-            var container = containerBuilder.Build();
-
-            var logger = container.Resolve<ILogger>();
+            var resolver = new MiniJournalDependencyResolver();
+            
+            var logger = resolver.Resolve<ILogger>();
             logger.LogEnvironmentInfo();
 
             var window = new Views.MainWindow
             {
-                DataContext = container.Resolve<ArticlesViewModel>()
+                DataContext = resolver.Resolve<ArticlesViewModel>()
             };
             window.Show();
         }

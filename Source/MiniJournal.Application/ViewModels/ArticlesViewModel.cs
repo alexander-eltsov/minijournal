@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ServiceModel;
 using System.Windows.Input;
 using Infotecs.MiniJournal.Application.ArticleServiceReference;
 using Infotecs.MiniJournal.Application.Commands;
+using Infotecs.MiniJournal.Application.Views;
 
 namespace Infotecs.MiniJournal.Application.ViewModels
 {
@@ -48,11 +48,15 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 selectedHeader = value; 
                 OnPropertyChanged();
-
-                LoadedArticle = selectedHeader == null
-                    ? null
-                    : articleService.GetArticle(selectedHeader.Id);
+                ReloadArticle();
             }
+        }
+
+        private void ReloadArticle()
+        {
+            LoadedArticle = selectedHeader == null
+                ? null
+                : articleService.GetArticle(selectedHeader.Id);
         }
 
         public ArticleData LoadedArticle
@@ -90,22 +94,21 @@ namespace Infotecs.MiniJournal.Application.ViewModels
 
         private void LoadHeaders()
         {
-            Headers.Clear();
-            var headersFromService = new HeaderData[0];
-
             try
             {
-                headersFromService = articleService.GetArticleHeaders();
+                Headers.Clear();
+
+                HeaderData[] headersFromService = articleService.GetArticleHeaders();
+
+                foreach (HeaderData header in headersFromService)
+                {
+                    Headers.Add(header);
+                }
             }
             catch (Exception exception)
             {
                 logger.LogError(exception);
-                // TODO: inform user, consider using some IDialogService
-            }
-
-            foreach (HeaderData header in headersFromService)
-            {
-                Headers.Add(header);
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
             }
         }
 
@@ -120,14 +123,14 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.CreateArticle(newArticle);
+
+                LoadHeaders();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception);
-                // TODO: inform user, consider using some IDialogService
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
             }
-
-            LoadHeaders();
         }
 
         private void SaveSelectedArticle()
@@ -135,14 +138,14 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.UpdateArticle(LoadedArticle);
+
+                LoadHeaders();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception);
-                // TODO: inform user, consider using some IDialogService
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
             }
-
-            LoadHeaders();
         }
 
         private void DeleteSelectedArticle()
@@ -150,19 +153,46 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.DeleteArticle(LoadedArticle.Id);
+
+                LoadHeaders();
             }
-            catch (EndpointNotFoundException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception);
-                // TODO: inform user, consider using some IDialogService
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
             }
-
-            LoadHeaders();
         }
 
         private void AddComment()
         {
-            throw new NotImplementedException();
+            var viewModel = MiniJournalDependencyResolver.Instance().Resolve<AddCommentViewModel>();
+            var view = MiniJournalDependencyResolver.Instance().Resolve<IDialogView>();
+
+            viewModel.User = Environment.UserName;
+            view.BindViewModel(viewModel);
+            view.ShowDialog();
+
+            if (!viewModel.DialogResult)
+            {
+                return;
+            }
+
+            try
+            {
+                var newComment = new CommentData
+                {
+                    User = viewModel.User,
+                    Text = viewModel.Comment
+                };
+                articleService.AddComment(LoadedArticle.Id, newComment);
+
+                ReloadArticle();
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception);
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+            }
         }
 
         private void DeleteComment()
@@ -170,14 +200,14 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.RemoveComment(LoadedArticle.Id, SelectedArticleComment.Id);
+
+                ReloadArticle();
             }
-            catch (EndpointNotFoundException exception)
+            catch (Exception exception)
             {
                 logger.LogError(exception);
-                // TODO: inform user, consider using some IDialogService
+                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
             }
-
-            LoadHeaders();
         }
     }
 }

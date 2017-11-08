@@ -116,6 +116,8 @@ namespace Infotecs.MiniJournal.Dal
                 {
                     UpdateArticleComments(connection, article);
                 }
+
+                connection.Close();
             }
         }
 
@@ -133,13 +135,6 @@ namespace Infotecs.MiniJournal.Dal
 
         private void UpdateArticleComments(IDbConnection connection, Article article)
         {
-            // create comments
-            IEnumerable<Comment> newComments = article.Comments.Where(comment => comment.Id == 0);
-            foreach (Comment newComment in newComments)
-            {
-                CreateArticleComment(connection, newComment);
-            }
-
             // delete comments
             string deleteCommentsSql = @"
                 DELETE FROM
@@ -155,16 +150,29 @@ namespace Infotecs.MiniJournal.Dal
                 deleteCommentsSql += $" AND [ID] NOT IN ({ string.Join(",", existingCommentIds)})";
             }
             connection.Execute(deleteCommentsSql, new { ArticleId = article.Id });
+
+            // create comments
+            IEnumerable<Comment> newComments = article.Comments.Where(comment => comment.Id == 0);
+            foreach (Comment newComment in newComments)
+            {
+                CreateArticleComment(connection, article, newComment);
+            }
         }
 
-        private void CreateArticleComment(IDbConnection connection, Comment comment)
+        private void CreateArticleComment(IDbConnection connection, Article article, Comment comment)
         {
             string sql = @"
                 INSERT INTO
-                    Comments ([Text], [ArticleID], [User])
+                    Comments ([User], [Text], [ArticleID])
                 VALUES
-                    (@Text, @ArticleID, @User)";
-            connection.Execute(sql, comment);
+                    (@User, @Text, @ArticleID)";
+            connection.Execute(sql,
+                new
+                {
+                    User = comment.User,
+                    Text = comment.Text,
+                    ArticleID = article.Id
+                });
         }
     }
 }
