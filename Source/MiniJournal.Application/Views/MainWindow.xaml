@@ -44,7 +44,7 @@
             <StackPanel Margin="10 0 0 0" Grid.Row="0" Grid.Column="1">
                 
                 <Label>Caption</Label>
-                <TextBox Text="{Binding LoadedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Text="{Binding LoadedArticle.Caption, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold" Foreground="Blue" />
                 
                 <Label>Text</Label>
                 <TextBox TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding LoadedArticle.Text, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
@@ -54,7 +54,7 @@
                     <ListBox.Resources>
                         <DataTemplate DataType="{x:Type models:CommentData}">
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding User}"></Label>
+                                <Label Content="{Binding User}" FontWeight="Bold" Margin="0,0,10,0"></Label>
                                 <Label Content="{Binding Text}"></Label>
                             </StackPanel>
                         </DataTemplate>
@@ -62,8 +62,8 @@
                 </ListBox>
 
                 <StackPanel Orientation="Horizontal">
-                    <Button Command="{Binding AddCommentCommand}">Add comment</Button>
-                    <Button Command="{Binding DeleteCommentCommand}">Delete comment</Button>
+                    <Button Command="{Binding AddCommentCommand}" Margin="5">Add comment</Button>
+                    <Button Command="{Binding DeleteCommentCommand}" Margin="5">Delete comment</Button>
                 </StackPanel>
                 
             </StackPanel>

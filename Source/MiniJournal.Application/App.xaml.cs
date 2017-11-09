@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using Autofac;
 using Infotecs.MiniJournal.Application.ViewModels;
 
 namespace Infotecs.MiniJournal.Application

@@ -2,12 +2,12 @@
 {
     public class Comment
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public string User { get; set; }
+        public virtual string User { get; set; }
 
-        public string Text { get; set; }
+        public virtual string Text { get; set; }
 
-        public Article Article { get; set; }
+        public virtual Article Article { get; set; }
     }
 }

@@ -74,24 +74,14 @@ namespace Infotecs.MiniJournal.Service
             var commentModel = mapper.Map<CommentData, Comment>(comment);
 
             ValidateComment(commentModel);
-            article.Comments.Add(commentModel);
+            article.AddComment(commentModel);
 
-            articleRepository.UpdateArticle(article);
+            articleRepository.CreateArticleComment(commentModel);
         }
 
         public void RemoveComment(int articleId, int commentId)
         {
-            var article = articleRepository.GetArticle(articleId);
-
-            IEnumerable<Comment> commentsToDelete = article.Comments
-                .Where(comment => comment.Id == commentId)
-                .ToArray();
-            foreach (Comment comment in commentsToDelete)
-            {
-                article.Comments.Remove(comment);
-            }
-
-            articleRepository.UpdateArticle(article);
+            articleRepository.DeleteArticleComment(articleId, commentId);
         }
 
         protected virtual void ValidateArticle(Article article)
@@ -99,7 +89,7 @@ namespace Infotecs.MiniJournal.Service
             var validationResult = articleValidator.Validate(article);
             if (!validationResult.IsValid)
             {
-                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
+                throw new ValidationException(validationResult.Errors.First().ErrorMessage);
             }
         }
 
@@ -108,7 +98,7 @@ namespace Infotecs.MiniJournal.Service
             var validationResult = commentValidator.Validate(comment);
             if (!validationResult.IsValid)
             {
-                throw new ValidationException(validationResult.Errors.Single().ErrorMessage);
+                throw new ValidationException(validationResult.Errors.First().ErrorMessage);
             }
         }
     }

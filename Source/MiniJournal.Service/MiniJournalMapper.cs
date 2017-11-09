@@ -7,7 +7,7 @@ namespace Infotecs.MiniJournal.Service
 {
     public class MiniJournalMapper : IMapper
     {
-        public MiniJournalMapper()
+        static MiniJournalMapper()
         {
             RegisterMappings();
         }

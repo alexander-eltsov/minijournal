@@ -15,5 +15,9 @@ namespace Infotecs.MiniJournal.Dal
         void UpdateArticle(Article article, bool updateComments = true);
 
         void DeleteArticle(int articleId);
+
+        void CreateArticleComment(Comment comment);
+
+        void DeleteArticleComment(int articleId, int commentId);
     }
 }

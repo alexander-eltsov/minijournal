@@ -4,14 +4,17 @@ namespace Infotecs.MiniJournal.Models
 {
     public class Header
     {
+        protected Header()
+        {
+        }
         public Header(int id, string caption)
         {
             Id = id;
             Caption = caption;
         }
 
-        public int Id { get; private set; }
+        public virtual int Id { get; protected set; }
 
-        public string Caption { get; private set; }
+        public virtual string Caption { get; protected set; }
     }
 }

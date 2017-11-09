@@ -1,29 +1,57 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Dapper;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
+using Infotecs.MiniJournal.Dal.Mappings;
 using Infotecs.MiniJournal.Models;
+using NHibernate;
+using NHibernate.Cfg;
+using NHibernate.Tool.hbm2ddl;
 
 namespace Infotecs.MiniJournal.Dal
 {
+    public class SessionFactory
+    {
+        private static ISessionFactory sessionFactory;
+
+        public static ISessionFactory Build(string connectionString)
+        {
+            if (sessionFactory == null)
+            {
+                sessionFactory = Fluently
+                    .Configure()
+                    .Database(MsSqlConfiguration.MsSql2005.ConnectionString(connectionString))
+                    .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ArticleMap>())
+                    //.ExposeConfiguration(BuildSchema)
+                    .BuildSessionFactory();
+            }
+            return sessionFactory;
+        }
+
+        private static void BuildSchema(Configuration config)
+        {
+            new SchemaExport(config)
+                .Create(false, true);
+        }
+    }
+
     public class ArticleRepository : IArticleRepository
     {
-        private readonly IConnectionFactory connectionFactory;
+        private readonly ISessionFactory sessionFactory;
 
-        public ArticleRepository(IConnectionFactory connectionFactory)
+        public ArticleRepository(string connectionString)
         {
-            this.connectionFactory = connectionFactory;
+            this.sessionFactory = SessionFactory.Build(connectionString);
         }
 
         public IList<Header> GetHeaders()
         {
-            string sql = "SELECT [ID], [Caption] FROM Articles";
-
-            using (var connection = connectionFactory.Create())
+            using (var session = sessionFactory.OpenSession())
             {
-                connection.Open();
-
-                List<Header> headers = connection.Query<Header>(sql).ToList();
+                IList<Header> headers = session
+                    .CreateCriteria(typeof(Header))
+                    .List<Header>();
 
                 return headers;
             }
@@ -31,130 +59,64 @@ namespace Infotecs.MiniJournal.Dal
 
         public Article GetArticle(int articleId)
         {
-            string sql = @"
-                SELECT
-                    [ID],
-                    [Caption],
-                    [Text]
-                FROM
-                    Articles
-                WHERE
-                    [ID] = @ArticleId;
-
-                SELECT
-                    [ID],
-                    [Text],
-                    [User]
-                FROM
-                    Comments
-                WHERE
-                    [ArticleID] = @ArticleID;";
-
-            using (var connection = connectionFactory.Create())
+            using (var session = sessionFactory.OpenSession())
             {
-                connection.Open();
+                Article article = session
+                    .QueryOver<Article>()
+                    .Fetch(x => x.Comments).Eager
+                    .Where(x => x.Id == articleId)
+                    .List()
+                    .FirstOrDefault();
 
-                using (var multi = connection.QueryMultiple(sql, new { ArticleID = articleId }))
-                {
-                    Article article = multi.Read<Article>().First();
-                    IEnumerable<Comment> comments = multi.Read<Comment>();
-                    article.Comments.AddRange(comments);
-
-                    return article;
-                }
+                return article;
             }
         }
 
         public void CreateArticle(Article article)
         {
-            string sql = "INSERT INTO Articles([Caption], [Text]) VALUES (@Caption, @Text)";
-
-            using (var connection = connectionFactory.Create())
+            using (var session = sessionFactory.OpenSession())
             {
-                connection.Open();
-
-                connection.Execute(sql, article);
+                session.Save(article);
+                session.Flush();
             }
         }
 
         public void UpdateArticle(Article article, bool updateComments = true)
         {
-            string sql = @"
-                UPDATE
-                    Articles
-                SET
-                    [Caption] = @Caption,
-                    [Text] = @Text
-                WHERE
-                    [ID] = @Id";
-
-            using (var connection = connectionFactory.Create())
+            using (var session = sessionFactory.OpenSession())
             {
-                connection.Open();
-
-                connection.Execute(sql, article);
-
-                if (updateComments)
-                {
-                    UpdateArticleComments(connection, article);
-                }
-
-                connection.Close();
+                session.SaveOrUpdate(article);
+                session.Flush();
             }
         }
 
         public void DeleteArticle(int articleId)
         {
-            string sql = "DELETE FROM Articles WHERE [ID] = @Id";
-
-            using (var connection = connectionFactory.Create())
+            using (var session = sessionFactory.OpenSession())
             {
-                connection.Open();
-
-                connection.Execute(sql, new { Id = articleId});
+                var article = session.Load<Article>(articleId);
+                session.Delete(article);
+                session.Flush();
             }
         }
 
-        private void UpdateArticleComments(IDbConnection connection, Article article)
+        public void CreateArticleComment(Comment comment)
         {
-            // delete comments
-            string deleteCommentsSql = @"
-                DELETE FROM
-                    Comments
-                WHERE
-                    [ArticleID] = @ArticleId";
-            int[] existingCommentIds = article.Comments
-                .Where(comment => comment.Id != 0)
-                .Select(comment => comment.Id)
-                .ToArray();
-            if (existingCommentIds.Length > 0)
+            using (var session = sessionFactory.OpenSession())
             {
-                deleteCommentsSql += $" AND [ID] NOT IN ({ string.Join(",", existingCommentIds)})";
-            }
-            connection.Execute(deleteCommentsSql, new { ArticleId = article.Id });
-
-            // create comments
-            IEnumerable<Comment> newComments = article.Comments.Where(comment => comment.Id == 0);
-            foreach (Comment newComment in newComments)
-            {
-                CreateArticleComment(connection, article, newComment);
+                session.Save(comment);
+                session.Flush();
             }
         }
 
-        private void CreateArticleComment(IDbConnection connection, Article article, Comment comment)
+        public void DeleteArticleComment(int articleId, int commentId)
         {
-            string sql = @"
-                INSERT INTO
-                    Comments ([User], [Text], [ArticleID])
-                VALUES
-                    (@User, @Text, @ArticleID)";
-            connection.Execute(sql,
-                new
-                {
-                    User = comment.User,
-                    Text = comment.Text,
-                    ArticleID = article.Id
-                });
+            using (var session = sessionFactory.OpenSession())
+            {
+                var article = session.Load<Comment>(commentId);
+                session.Delete(article);
+                session.Flush();
+            }
         }
     }
 }

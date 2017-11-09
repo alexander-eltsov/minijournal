@@ -10,12 +10,18 @@ namespace Infotecs.MiniJournal.Models
             Comments = new List<Comment>();
         }
 
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public string Caption { get; set; }
+        public virtual string Caption { get; set; }
 
-        public string Text { get; set; }
+        public virtual string Text { get; set; }
 
-        public List<Comment> Comments { get; private set; }
+        public virtual IList<Comment> Comments { get; protected set; }
+
+        public virtual void AddComment(Comment comment)
+        {
+            comment.Article = this;
+            Comments.Add(comment);
+        }
     }
 }

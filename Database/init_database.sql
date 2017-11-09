@@ -12,7 +12,7 @@ GO
 CREATE TABLE [dbo].[Comments] (
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Text] nvarchar(512) NOT NULL,
-	[ArticleID] int,
+	[ArticleID] int NOT NULL,
 	[User] [nvarchar](128) NOT NULL,
 	PRIMARY KEY (ID),
 	FOREIGN KEY (ArticleID) REFERENCES Articles(ID) ON DELETE CASCADE
