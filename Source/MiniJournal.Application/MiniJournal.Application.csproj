@@ -68,6 +68,7 @@
     <Compile Include="MiniJournalDependencyResolver.cs" />
     <Compile Include="IDependencyResolver.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="NotifiactionService.cs" />
     <Compile Include="Views\AddCommentViewDialog.cs" />
     <Compile Include="Views\IDialogView.cs" />
     <Compile Include="Logger.cs" />

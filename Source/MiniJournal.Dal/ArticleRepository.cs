@@ -33,53 +33,35 @@ namespace Infotecs.MiniJournal.Dal
         {
             string sql = @"
                 SELECT
-                    a.[ID] AS [ArticleID],
-                    a.[Caption],
-                    a.[Text],
-                    c.[ID] AS [CommentID],
-                    c.[Text] AS [CommentText],
-                    c.[User]
+                    [ID],
+                    [Caption],
+                    [Text]
                 FROM
-                    Articles a
-                    LEFT OUTER JOIN Comments c ON a.[ID] = c.[ArticleID]
+                    Articles
                 WHERE
-                    a.[ID] = @Id";
+                    [ID] = @ArticleId;
+
+                SELECT
+                    [ID],
+                    [Text],
+                    [User]
+                FROM
+                    Comments
+                WHERE
+                    [ArticleID] = @ArticleID;";
 
             using (var connection = connectionFactory.Create())
             {
                 connection.Open();
 
-                Article fetchedArticle = null;
-                fetchedArticle = connection
-                    .Query<dynamic>(sql, new { Id = articleId })
-                    .Select(item =>
-                    {
-                        if (fetchedArticle == null)
-                        {
-                            fetchedArticle = new Article
-                            {
-                                Id = item.ArticleID,
-                                Caption = item.Caption,
-                                Text = item.Text
-                            };
-                        }
-                        if (item.CommentID != null)
-                        {
-                            var comment = new Comment()
-                            {
-                                Id = item.CommentID,
-                                Text = item.CommentText,
-                                User = item.User,
-                                Article = fetchedArticle
-                            };
-                            fetchedArticle.Comments.Add(comment);
-                        }
-                        return fetchedArticle;
-                    })
-                    .ToList()
-                    .FirstOrDefault();
+                using (var multi = connection.QueryMultiple(sql, new { ArticleID = articleId }))
+                {
+                    Article article = multi.Read<Article>().First();
+                    IEnumerable<Comment> comments = multi.Read<Comment>();
+                    article.Comments.AddRange(comments);
 
-                return fetchedArticle;
+                    return article;
+                }
             }
         }
 
