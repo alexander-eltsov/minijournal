@@ -1,17 +1,19 @@
-﻿using Infotecs.MiniJournal.Contracts;
+﻿using System;
+using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
+using Infotecs.MiniJournal.Service.MessageProcessors;
 using Moq;
 using NUnit.Framework;
 
-namespace Infotecs.MiniJournal.Service.Tests
+namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
 {
     [TestFixture]
-    public class ArticleServiceTests
+    public class ArticleProcessorTests
     {
-        private class FakeArticleService : ArticleService
+        private class FakeArticleProcessor : ArticleProcessor
         {
-            public FakeArticleService(IArticleRepository articleRepository) : base(articleRepository, new MiniJournalMapper())
+            public FakeArticleProcessor(IArticleRepository articleRepository) : base(articleRepository, new MiniJournalMapper())
             {
             }
 
@@ -28,21 +30,10 @@ namespace Infotecs.MiniJournal.Service.Tests
         }
 
         [Test]
-        public void GetArticleHeaders_InvokesArticleRepositoryGetHeaders()
+        public void Post_CreateArticleRequest_InvokesArticleRepositoryCreateArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object);
-
-            sut.GetArticleHeaders();
-
-            mockRepository.Verify(repository => repository.GetHeaders(), Times.AtLeastOnce());
-        }
-
-        [Test]
-        public void CreateArticle_InvokesArticleRepositoryCreateArticle()
-        {
-            var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object)
+            var sut = new FakeArticleProcessor(mockRepository.Object)
             {
                 SupressArticleValidation = true
             };
@@ -52,16 +43,16 @@ namespace Infotecs.MiniJournal.Service.Tests
                 Text = string.Empty
             };
 
-            sut.CreateArticle(newArticle);
+            sut.Post(new CreateArticleRequest { NewArticle = newArticle });
 
             mockRepository.Verify(repository => repository.CreateArticle(It.IsAny<Article>()), Times.AtLeastOnce());
         }
 
         [Test]
-        public void UpdateArticle_InvokesArticleRepositoryUpdateArticle()
+        public void Put_UpdateArticleRequest_InvokesArticleRepositoryUpdateArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object)
+            var sut = new FakeArticleProcessor(mockRepository.Object)
             {
                 SupressArticleValidation = true
             };
@@ -71,16 +62,16 @@ namespace Infotecs.MiniJournal.Service.Tests
                 Text = string.Empty
             };
 
-            sut.UpdateArticle(article);
+            sut.Put(new UpdateArticleRequest {Article = article });
 
             mockRepository.Verify(repository => repository.UpdateArticle(It.IsAny<Article>()), Times.AtLeastOnce());
         }
 
         [Test]
-        public void DeleteArticle_InvokesArticleRepositoryDeleteArticle()
+        public void DeleteOneWay_DeleteArticleRequest_InvokesArticleRepositoryDeleteArticle()
         {
             var mockRepository = new Mock<IArticleRepository>();
-            var sut = new FakeArticleService(mockRepository.Object)
+            var sut = new FakeArticleProcessor(mockRepository.Object)
             {
                 SupressArticleValidation = true
             };
@@ -91,9 +82,10 @@ namespace Infotecs.MiniJournal.Service.Tests
                 Text = string.Empty
             };
 
-            sut.DeleteArticle(article.Id);
+            sut.DeleteOneWay(new DeleteArticleRequest { ArticleId = article.Id });
 
             mockRepository.Verify(repository => repository.DeleteArticle(It.IsAny<int>()), Times.AtLeastOnce());
         }
+
     }
 }

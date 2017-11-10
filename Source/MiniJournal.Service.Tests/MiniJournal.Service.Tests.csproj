@@ -58,7 +58,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleServiceTests.cs" />
+    <Compile Include="MessageProcessors\ArticleHeaderProcessorTests.cs" />
+    <Compile Include="MessageProcessors\ArticleProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validators\ArticleIsUniqueValidatorTests.cs" />
     <Compile Include="Validators\ArticleValidatorTests.cs" />

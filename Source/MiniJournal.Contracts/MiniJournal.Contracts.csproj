@@ -38,11 +38,23 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddCommentRequest.cs" />
+    <Compile Include="AddCommentResponse.cs" />
     <Compile Include="ArticleData.cs" />
     <Compile Include="CommentData.cs" />
+    <Compile Include="CreateArticleRequest.cs" />
+    <Compile Include="CreateArticleResponse.cs" />
+    <Compile Include="DeleteArticleRequest.cs" />
+    <Compile Include="GetArticleHeadersRequest.cs" />
+    <Compile Include="GetArticleHeadersResponse.cs" />
+    <Compile Include="GetArticleRequest.cs" />
+    <Compile Include="GetArticleResponse.cs" />
     <Compile Include="HeaderData.cs" />
     <Compile Include="IArticleService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoveCommentRequest.cs" />
+    <Compile Include="UpdateArticleRequest.cs" />
+    <Compile Include="UpdateArticleResponse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

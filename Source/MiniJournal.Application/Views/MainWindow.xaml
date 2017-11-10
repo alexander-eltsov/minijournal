@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:Infotecs.MiniJournal.Application.ViewModels"
-        xmlns:models="clr-namespace:Infotecs.MiniJournal.Application.ArticleServiceReference"
+        xmlns:models="clr-namespace:Infotecs.MiniJournal.Contracts;assembly=Infotecs.MiniJournal.Contracts"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:ArticlesViewModel}"
         Title="MainWindow" Height="539" Width="636">

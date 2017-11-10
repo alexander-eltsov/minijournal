@@ -22,5 +22,14 @@ namespace Infotecs.MiniJournal.Application.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8082/article")]
+        public string ServiceAddress {
+            get {
+                return ((string)(this["ServiceAddress"]));
+            }
+        }
     }
 }

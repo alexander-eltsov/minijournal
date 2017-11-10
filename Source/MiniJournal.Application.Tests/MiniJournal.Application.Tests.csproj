@@ -55,7 +55,6 @@
       <HintPath>..\..\packages\System.ComponentModel.TypeConverter.4.1.0\lib\net45\System.ComponentModel.TypeConverter.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,6 +67,10 @@
     <ProjectReference Include="..\MiniJournal.Application\MiniJournal.Application.csproj">
       <Project>{bae9f7cb-8afc-4598-b2bf-4e13fa84ae64}</Project>
       <Name>MiniJournal.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MiniJournal.Contracts\MiniJournal.Contracts.csproj">
+      <Project>{5d8ff6e0-8586-41f8-aea6-4ee8c5132144}</Project>
+      <Name>MiniJournal.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,6 +2,7 @@ using System.Configuration;
 using Autofac;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
+using Infotecs.MiniJournal.Service.MessageProcessors;
 
 namespace Infotecs.MiniJournal.Service
 {
@@ -20,7 +21,10 @@ namespace Infotecs.MiniJournal.Service
                 return new ArticleRepository(connectionString);
             }).As<IArticleRepository>();
 
-            builder.RegisterType<ArticleService>().As<IArticleService>();
+            // message processors
+            builder.RegisterType<ArticleHeaderProcessor>().AsSelf();
+            builder.RegisterType<ArticleProcessor>().AsSelf();
+            builder.RegisterType<CommentProcessor>().AsSelf();
 
             return builder.Build();
         }

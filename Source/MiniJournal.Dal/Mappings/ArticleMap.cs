@@ -1,5 +1,4 @@
-﻿using FluentNHibernate.Conventions.AcceptanceCriteria;
-using FluentNHibernate.Mapping;
+﻿using FluentNHibernate.Mapping;
 using Infotecs.MiniJournal.Models;
 
 namespace Infotecs.MiniJournal.Dal.Mappings

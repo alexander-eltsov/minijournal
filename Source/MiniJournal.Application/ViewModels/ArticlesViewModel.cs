@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Infotecs.MiniJournal.Application.ArticleServiceReference;
 using Infotecs.MiniJournal.Application.Commands;
 using Infotecs.MiniJournal.Application.Views;
+using Infotecs.MiniJournal.Contracts;
 
 namespace Infotecs.MiniJournal.Application.ViewModels
 {
@@ -98,7 +98,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 Headers.Clear();
 
-                HeaderData[] headersFromService = articleService.GetArticleHeaders();
+                IEnumerable<HeaderData> headersFromService = articleService.GetArticleHeaders();
 
                 foreach (HeaderData header in headersFromService)
                 {

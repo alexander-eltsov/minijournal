@@ -1,75 +1,56 @@
 ﻿using System;
 using System.ServiceModel;
-using System.ServiceModel.Description;
-using Autofac.Integration.Wcf;
+using System.ServiceModel.Web;
+using Autofac;
 using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Service.MessageProcessors;
+using Nelibur.ServiceModel.Services;
+using Nelibur.ServiceModel.Services.Default;
 
 namespace Infotecs.MiniJournal.Service
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static void ConfigureService(IContainer container)
+        {
+            NeliburRestService.Configure(x =>
+            {
+                x.Bind<GetArticleHeadersRequest, ArticleHeaderProcessor>(() => container.Resolve<ArticleHeaderProcessor>());
+
+                x.Bind<GetArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
+                x.Bind<CreateArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
+                x.Bind<UpdateArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
+                x.Bind<DeleteArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
+
+                x.Bind<AddCommentRequest, CommentProcessor>(() => container.Resolve<CommentProcessor>());
+                x.Bind<RemoveCommentRequest, CommentProcessor>(() => container.Resolve<CommentProcessor>());
+            });
+        }
+
+        private static void Main(string[] args)
         {
             var containerBuilder = new MiniJournalContainerBuilder();
             using (var container = containerBuilder.Build())
             {
-                //RunServiceHost(container);
+                ConfigureService(container);
 
-                Uri address = new Uri("http://localhost:8082/article");
-                ServiceHost host = new ServiceHost(typeof(ArticleService), address);
-                //host.AddServiceEndpoint(typeof(IEchoService), new BasicHttpBinding(), string.Empty);
-
-                // Here's the important part - attaching the DI behavior to the service host
-                // and passing in the container.
-                host.AddDependencyInjectionBehavior<IArticleService>(container);
-
-                host.Description.Behaviors.Add(new ServiceMetadataBehavior { HttpGetEnabled = true, HttpGetUrl = address });
-
-                // include exception details
-                ServiceDebugBehavior debug = host.Description.Behaviors.Find<ServiceDebugBehavior>();
-                if (debug == null)
+                var host = new WebServiceHost(typeof(JsonServicePerCall));
+                try
                 {
-                    host.Description.Behaviors.Add(
-                        new ServiceDebugBehavior() { IncludeExceptionDetailInFaults = true });
+                    host.Open();
+
+                    Console.WriteLine("Service is running");
+                    Console.WriteLine("Press enter to quit...");
+                    Console.ReadLine();
+
+                    host.Close();
                 }
-                else
+                catch (CommunicationException cex)
                 {
-                    if (!debug.IncludeExceptionDetailInFaults)
-                    {
-                        debug.IncludeExceptionDetailInFaults = true;
-                    }
+                    Console.WriteLine("An exception occurred: {0}", cex.Message);
+                    host.Abort();
                 }
-
-                host.Open();
-
-                Console.WriteLine("The host has been opened.");
-                Console.ReadLine();
-
-                host.Close();
-                Environment.Exit(0);
             }
         }
-
-        //private static void RunServiceHost(IContainer container)
-        //{
-        //    Uri baseAddress = new Uri("http://localhost:8082/article");
-
-        //    // Create the ServiceHost.
-        //    using (ServiceHost host = new ServiceHost(typeof(ArticleService), baseAddress))
-        //    {
-        //        var metadataBehavior = new ServiceMetadataBehavior();
-        //        metadataBehavior.HttpGetEnabled = true;
-        //        metadataBehavior.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
-        //        host.Description.Behaviors.Add(metadataBehavior);
-
-        //        host.Open();
-
-        //        Console.WriteLine("The service is ready at {0}", baseAddress);
-        //        Console.WriteLine("Press <Enter> to stop the service.");
-        //        Console.ReadLine();
-
-        //        host.Close();
-        //    }
-        //}
     }
 }

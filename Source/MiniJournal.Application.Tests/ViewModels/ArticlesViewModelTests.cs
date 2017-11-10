@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using Autofac;
 using Autofac.Extras.Moq;
-using Infotecs.MiniJournal.Application.ArticleServiceReference;
 using Infotecs.MiniJournal.Application.ViewModels;
+using Infotecs.MiniJournal.Contracts;
 using Moq;
 using NUnit.Framework;
 

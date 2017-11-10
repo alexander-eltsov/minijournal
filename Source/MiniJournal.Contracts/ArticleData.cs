@@ -16,6 +16,6 @@ namespace Infotecs.MiniJournal.Contracts
         public string Text { get; set; }
 
         [DataMember]
-        public IEnumerable<CommentData> Comments { get; set; }
+        public IList<CommentData> Comments { get; set; }
     }
 }

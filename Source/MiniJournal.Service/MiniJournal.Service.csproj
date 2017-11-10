@@ -46,14 +46,23 @@
     <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentValidation.7.2.1\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
+    <Reference Include="Nelibur, Version=3.0.3.223, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nelibur.3.1.6\lib\net45\Nelibur.dll</HintPath>
+    </Reference>
+    <Reference Include="Nelibur.Sword, Version=3.0.3.223, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nelibur.Sword.3.1.6\lib\net45\Nelibur.Sword.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleService.cs" />
     <Compile Include="IMapper.cs" />
+    <Compile Include="MessageProcessors\ArticleHeaderProcessor.cs" />
+    <Compile Include="MessageProcessors\ArticleProcessor.cs" />
+    <Compile Include="MessageProcessors\CommentProcessor.cs" />
     <Compile Include="MiniJournalContainerBuilder.cs" />
     <Compile Include="MiniJournalMapper.cs" />
     <Compile Include="Program.cs" />
