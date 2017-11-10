@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Infotecs.MiniJournal.Models
 {
     public class Article
     {
-        public Article()
+        public Article() : this(null)
         {
-            Comments = new List<Comment>();
+        }
+
+        public Article(IList<Comment> comments)
+        {
+            Comments = comments ?? new List<Comment>();
         }
 
         public virtual int Id { get; set; }

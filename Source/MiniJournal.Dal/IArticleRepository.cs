@@ -12,7 +12,7 @@ namespace Infotecs.MiniJournal.Dal
 
         void CreateArticle(Article article);
 
-        void UpdateArticle(Article article, bool updateComments = true);
+        void UpdateArticle(Article article);
 
         void DeleteArticle(int articleId);
 

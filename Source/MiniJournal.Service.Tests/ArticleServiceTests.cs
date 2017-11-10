@@ -73,7 +73,7 @@ namespace Infotecs.MiniJournal.Service.Tests
 
             sut.UpdateArticle(article);
 
-            mockRepository.Verify(repository => repository.UpdateArticle(It.IsAny<Article>(), It.IsAny<bool>()), Times.AtLeastOnce());
+            mockRepository.Verify(repository => repository.UpdateArticle(It.IsAny<Article>()), Times.AtLeastOnce());
         }
 
         [Test]

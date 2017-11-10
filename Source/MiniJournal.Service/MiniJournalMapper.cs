@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Models;
 
@@ -14,23 +14,39 @@ namespace Infotecs.MiniJournal.Service
 
         public TDestination Map<TSource, TDestination>(TSource source)
         {
-            return AutoMapper.Mapper.Map<TSource, TDestination>(source);
+            return Mapper.Map<TSource, TDestination>(source);
+        }
+
+        public TDestination Map<TSource, TDestination>(TSource source, TDestination destination)
+        {
+            return Mapper.Map<TSource, TDestination>(source, destination);
         }
 
         private static void RegisterMappings()
         {
-            AutoMapper.Mapper.CreateMap<HeaderData, Header>();
-            AutoMapper.Mapper.CreateMap<Header, HeaderData>();
+            Mapper.CreateMap<Header, HeaderData>();
+            Mapper.CreateMap<HeaderData, Header>();
 
-            AutoMapper.Mapper.CreateMap<Comment, CommentData>();
-            AutoMapper.Mapper.CreateMap<CommentData, Comment>();
+            Mapper.CreateMap<Comment, CommentData>();
+            Mapper.CreateMap<CommentData, Comment>();
 
-            AutoMapper.Mapper.CreateMap<ArticleData, Article>()
+            Mapper.CreateMap<Article, ArticleData>();
+            Mapper.CreateMap<ArticleData, Article>()
+                .ConstructUsing(articleData =>
+                {
+                    var comments = Mapper.Map<IList<Comment>>(articleData.Comments);
+                    var article = new Article(comments)
+                    {
+                        Id = articleData.Id,
+                        Caption = articleData.Caption,
+                        Text = articleData.Text
+                    };
+                    article.Comments.Each(comment => comment.Article = article);
+                    return article;
+                })
                 .ForMember(
                     article => article.Comments,
-                    options => options.MapFrom(articleData => articleData.Comments));
-
-            AutoMapper.Mapper.CreateMap<Article, ArticleData>();
+                    options => options.Ignore());
         }
     }
 }

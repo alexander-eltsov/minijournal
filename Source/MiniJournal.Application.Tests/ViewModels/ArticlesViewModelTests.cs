@@ -61,5 +61,28 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
                 Assert.AreEqual("Fake Article", sut.Headers.ToArray()[0].Caption);
             }
         }
+
+        [Test]
+        public void SaveArticleCommand_AfterExecutedSuccessfully_ReloadsArticleUsingServiceGetArticleOperation()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var header = new HeaderData
+                {
+                    Id = 1,
+                    Caption = "Fake Article"
+                };
+                var moqArticleService = new Mock<IArticleService>();
+                var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
+                sut.SelectedHeader = header;
+                moqArticleService.ResetCalls();
+
+                sut.SaveArticleCommand.Execute(null);
+
+                moqArticleService.Verify(
+                    service => service.GetArticle(It.Is<int>(i => i == header.Id)),
+                    Times.Once());
+            }
+        }
     }
 }

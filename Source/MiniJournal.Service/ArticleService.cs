@@ -60,7 +60,7 @@ namespace Infotecs.MiniJournal.Service
         {
             var articleModel = mapper.Map<ArticleData, Article>(article);
             ValidateArticle(articleModel);
-            articleRepository.UpdateArticle(articleModel, updateComments: false);
+            articleRepository.UpdateArticle(articleModel);
         }
 
         public void DeleteArticle(int articleId)

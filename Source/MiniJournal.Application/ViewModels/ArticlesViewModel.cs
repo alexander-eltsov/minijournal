@@ -139,7 +139,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 articleService.UpdateArticle(LoadedArticle);
 
-                LoadHeaders();
+                ReloadArticle();
             }
             catch (Exception exception)
             {

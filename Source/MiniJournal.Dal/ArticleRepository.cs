@@ -1,41 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using Infotecs.MiniJournal.Dal.Mappings;
 using Infotecs.MiniJournal.Models;
 using NHibernate;
-using NHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
 
 namespace Infotecs.MiniJournal.Dal
 {
-    public class SessionFactory
-    {
-        private static ISessionFactory sessionFactory;
-
-        public static ISessionFactory Build(string connectionString)
-        {
-            if (sessionFactory == null)
-            {
-                sessionFactory = Fluently
-                    .Configure()
-                    .Database(MsSqlConfiguration.MsSql2005.ConnectionString(connectionString))
-                    .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ArticleMap>())
-                    //.ExposeConfiguration(BuildSchema)
-                    .BuildSessionFactory();
-            }
-            return sessionFactory;
-        }
-
-        private static void BuildSchema(Configuration config)
-        {
-            new SchemaExport(config)
-                .Create(false, true);
-        }
-    }
-
     public class ArticleRepository : IArticleRepository
     {
         private readonly ISessionFactory sessionFactory;
@@ -81,7 +50,7 @@ namespace Infotecs.MiniJournal.Dal
             }
         }
 
-        public void UpdateArticle(Article article, bool updateComments = true)
+        public void UpdateArticle(Article article)
         {
             using (var session = sessionFactory.OpenSession())
             {
