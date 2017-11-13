@@ -36,7 +36,11 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
 
             articleRepository.CreateArticleComment(commentModel);
 
-            return new AddCommentResponse();
+            return new AddCommentResponse
+            {
+                ArticleId = article.Id,
+                CommentId = commentModel.Id
+            };
         }
 
         public void DeleteOneWay(RemoveCommentRequest request)

@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniJournal.Application.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniJournal.Models", "Source\MiniJournal.Models\MiniJournal.Models.csproj", "{BFA49D85-EA09-435D-83DC-973C7B8BF223}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniJournal.Specs", "Source\MiniJournal.Specs\MiniJournal.Specs.csproj", "{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{BFA49D85-EA09-435D-83DC-973C7B8BF223}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFA49D85-EA09-435D-83DC-973C7B8BF223}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFA49D85-EA09-435D-83DC-973C7B8BF223}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

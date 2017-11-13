@@ -46,7 +46,10 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
             ValidateArticle(articleModel);
             articleRepository.CreateArticle(articleModel);
 
-            return new CreateArticleResponse();
+            return new CreateArticleResponse
+            {
+                ArticleId = articleModel.Id
+            };
         }
 
         public object Put(UpdateArticleRequest request)
