@@ -3,14 +3,20 @@
 Background:
 	Given Test server is running
 
-Scenario: Create Test Article with Comment, Then Delete both
-	When I send create article request
+Scenario: Create Test Article with Comments, then Delete all
+	Given Test article with caption 'Test article 1' and text 'Some text'
+	Given Test article's caption has not been already occupied
+	When I send a request to create test article
 	Then A new article is created
 	And A new article's header is available to user through get article headers request
 
-	When I send add comment request
-	Then A new comment for test article is created
-	And A new comment is available to user through get article request
+	Given these Test Comments:
+	| User  | Text |
+	| User1 | First test comment |
+	| User2 | Another user reply |
+	When I send add comment requests for each test comment
+	Then Test comments for test article are created
+	And Test comments are available to user through get article request
 
 	When I send delete article request
 	Then A test article is deleted

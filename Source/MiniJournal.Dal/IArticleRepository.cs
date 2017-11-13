@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Infotecs.MiniJournal.Models;
+using LanguageExt;
 
 namespace Infotecs.MiniJournal.Dal
 {
@@ -8,7 +9,7 @@ namespace Infotecs.MiniJournal.Dal
     {
         IList<Header> GetHeaders();
 
-        Article GetArticle(int articleId);
+        Option<Article> GetArticle(int articleId);
 
         void CreateArticle(Article article);
 

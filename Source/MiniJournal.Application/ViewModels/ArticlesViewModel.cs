@@ -48,7 +48,15 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             {
                 selectedHeader = value; 
                 OnPropertyChanged();
-                ReloadArticle();
+                try
+                {
+                    ReloadArticle();
+                }
+                catch (Exception exception)
+                {
+                    logger.LogError(exception);
+                    MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                }
             }
         }
 

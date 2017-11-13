@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.ServiceModel.Web;
 using FluentValidation;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
@@ -28,18 +30,21 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
 
         public object Post(AddCommentRequest request)
         {
-            var article = articleRepository.GetArticle(request.ArticleId);
-            var commentModel = mapper.Map<CommentData, Comment>(request.Comment);
+            var article = articleRepository
+                .GetArticle(request.ArticleId)
+                .Some(a => a)
+                .None(() => throw new WebFaultException(HttpStatusCode.NotFound));
+            var comment = mapper
+                .Map<CommentData, Comment>(request.Comment);
 
-            ValidateComment(commentModel);
-            article.AddComment(commentModel);
-
-            articleRepository.CreateArticleComment(commentModel);
+            ValidateComment(comment);
+            article.AddComment(comment);
+            articleRepository.CreateArticleComment(comment);
 
             return new AddCommentResponse
             {
                 ArticleId = article.Id,
-                CommentId = commentModel.Id
+                CommentId = comment.Id
             };
         }
 

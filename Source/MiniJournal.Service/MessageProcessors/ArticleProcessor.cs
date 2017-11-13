@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.ServiceModel.Web;
 using FluentValidation;
 using Infotecs.MiniJournal.Contracts;
 using Infotecs.MiniJournal.Dal;
@@ -31,12 +33,15 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
 
         public object Get(GetArticleRequest request)
         {
-            var article = articleRepository.GetArticle(request.ArticleId);
-            var articleData = mapper.Map<Article, ArticleData>(article);
+            var article = articleRepository
+                .GetArticle(request.ArticleId)
+                .Map(articleModel => mapper.Map<Article, ArticleData>(articleModel))
+                .Some(a => a)
+                .None(() => throw new WebFaultException(HttpStatusCode.NotFound));
 
             return new GetArticleResponse
             {
-                Article = articleData
+                Article = article
             };
         }
 

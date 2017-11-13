@@ -72,33 +72,49 @@ namespace Infotecs.MiniJournal.Specs
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Create Test Article with Comment, Then Delete both")]
-        public virtual void CreateTestArticleWithCommentThenDeleteBoth()
+        [NUnit.Framework.DescriptionAttribute("Create Test Article with Comments, then Delete all")]
+        public virtual void CreateTestArticleWithCommentsThenDeleteAll()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Test Article with Comment, Then Delete both", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Test Article with Comments, then Delete all", ((string[])(null)));
 #line 6
 this.ScenarioSetup(scenarioInfo);
 #line 3
 this.FeatureBackground();
 #line 7
- testRunner.When("I send create article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("Test article with caption \'Test article 1\' and text \'Some text\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 8
- testRunner.Then("A new article is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Given("Test article\'s caption has not been already occupied", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 9
- testRunner.And("A new article\'s header is available to user through get article headers request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I send a request to create test article", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 10
+ testRunner.Then("A new article is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 11
- testRunner.When("I send add comment request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 12
- testRunner.Then("A new comment for test article is created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("A new article\'s header is available to user through get article headers request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                        "User",
+                        "Text"});
+            table1.AddRow(new string[] {
+                        "User1",
+                        "First test comment"});
+            table1.AddRow(new string[] {
+                        "User2",
+                        "Another user reply"});
 #line 13
- testRunner.And("A new comment is available to user through get article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 15
- testRunner.When("I send delete article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 16
- testRunner.Then("A test article is deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Given("these Test Comments:", ((string)(null)), table1, "Given ");
 #line 17
- testRunner.And("Test Article is no longer available through get article headers request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I send add comment requests for each test comment", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 18
+ testRunner.Then("Test comments for test article are created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 19
+ testRunner.And("Test comments are available to user through get article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 21
+ testRunner.When("I send delete article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 22
+ testRunner.Then("A test article is deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 23
+ testRunner.And("Test Article is no longer available through get article headers request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
  testRunner.And("Test Article is no longer available through get article request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

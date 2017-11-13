@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Web;
 using Infotecs.MiniJournal.Contracts;
 using NUnit.Framework;
 using TechTalk.SpecFlow;
@@ -26,38 +28,79 @@ namespace Infotecs.MiniJournal.Specs
             }, "Ensure test server is running and available");
         }
 
-        [When(@"I send create article request")]
-        public void WhenISendCreateArticleRequest()
+        [Given(@"Test article with caption '(.*)' and text '(.*)'")]
+        public void GivenTestArticleWithCaptionAndText(string caption, string text)
         {
             var newArticle = new ArticleData
             {
-                Caption = Guid.NewGuid().ToString(),
-                Text = "This a test article with unique caption"
-            };
-            var request = new CreateArticleRequest
-            {
-                NewArticle = newArticle
+                Caption = caption,
+                Text = text
             };
             ScenarioContext.Current["NewArticle"] = newArticle;
+        }
+
+        [Given(@"Test article's caption has not been already occupied")]
+        public void GivenTestArticleSCaptionHasNotBeenAlreadyOccupied()
+        {
+            var articleData = (ArticleData)ScenarioContext.Current["NewArticle"];
+
+            var request = new GetArticleHeadersRequest();
+            var response = MiniJournalContext.ServiceClient.Get<GetArticleHeadersResponse>(request);
+
+            Assert.IsFalse(response.Headers.Any(header =>
+                    header.Caption == articleData.Caption),
+                $"Article caption {articleData.Caption} should be available after in test server");
+        }
+
+        [Given(@"these Test Comments:")]
+        public void GivenTheseTestComments(Table table)
+        {
+            var testComments = new List<CommentData>();
+            List<string> columnsList = table.Header.ToList();
+            var userIndex = columnsList.IndexOf(columnsList.First(s => s.Equals("user", StringComparison.CurrentCultureIgnoreCase)));
+            var textIndex = columnsList.IndexOf(columnsList.First(s => s.Equals("text", StringComparison.CurrentCultureIgnoreCase)));
+            foreach (TableRow row in table.Rows)
+            {
+                string[] valuesArray = row.Values.ToArray();
+                testComments.Add(new CommentData
+                {
+                    User = valuesArray[userIndex],
+                    Text = valuesArray[textIndex]
+                });
+            }
+
+            ScenarioContext.Current["TestComments"] = testComments;
+        }
+
+        [When(@"I send a request to create test article")]
+        public void WhenISendARequestToCreateArticleWithCaption()
+        {
+            var request = new CreateArticleRequest
+            {
+                NewArticle = (ArticleData) ScenarioContext.Current["NewArticle"]
+            };
             ScenarioContext.Current["AddArticleResult"] = MiniJournalContext.ServiceClient.Post<CreateArticleResponse>(request);
         }
 
-        [When(@"I send add comment request")]
-        public void WhenISendAddCommentRequest()
+        [When(@"I send add comment requests for each test comment")]
+        public void WhenISendAddCommentRequests()
         {
-            var newComment = new CommentData
-            {
-                User = "SomeUser",
-                Text = "This a unique comment for a test article."
-            };
             var articleData = (ArticleData) ScenarioContext.Current["NewArticle"];
-            var request = new AddCommentRequest
+            var testComments = (IList<CommentData>) ScenarioContext.Current["TestComments"];
+
+            var addCommentResults = new List<AddCommentResponse>();
+            foreach (var testComment in testComments)
             {
-                ArticleId = articleData.Id,
-                Comment = newComment
-            };
-            ScenarioContext.Current["NewComment"] = newComment;
-            ScenarioContext.Current["AddCommentResult"] = MiniJournalContext.ServiceClient.Post<AddCommentResponse>(request);
+                var request = new AddCommentRequest
+                {
+                    ArticleId = articleData.Id,
+                    Comment = testComment
+                };
+                var response = MiniJournalContext.ServiceClient.Post<AddCommentResponse>(request);
+                addCommentResults.Add(response);
+            }
+
+            ScenarioContext.Current["AddCommentResults"] = addCommentResults;
         }
 
         [When(@"I send delete article request")]
@@ -96,24 +139,27 @@ namespace Infotecs.MiniJournal.Specs
                 "Header for test article is not found");
         }
         
-        [Then(@"A new comment for test article is created")]
+        [Then(@"Test comments for test article are created")]
         public void ThenANewCommentForTestArticleIsCreated()
         {
-            var repsonse = ScenarioContext.Current["AddCommentResult"] as AddCommentResponse;
+            var testComments = (IList<CommentData>)ScenarioContext.Current["TestComments"];
+            var responses = (IList<AddCommentResponse>) ScenarioContext.Current["AddCommentResults"];
 
-            Assert.IsNotNull(repsonse, "Response from AddComment should not be null");
-            Assert.IsTrue(repsonse.ArticleId > 0, "Invalid ArticleId");
-            Assert.IsTrue(repsonse.CommentId > 0, "Invalid CommentId");
-
-            var newCommentData = (CommentData)ScenarioContext.Current["NewComment"];
-            newCommentData.Id = repsonse.CommentId;
+            Assert.AreEqual(testComments.Count, responses.Count, "Number of AddComment responses should be equal to number of requests");
+            for (var index = 0; index < responses.Count; index++)
+            {
+                AddCommentResponse addCommentResponse = responses[index];
+                Assert.IsTrue(addCommentResponse.ArticleId > 0, "Invalid ArticleId");
+                Assert.IsTrue(addCommentResponse.CommentId > 0, "Invalid CommentId");
+                testComments[index].Id = addCommentResponse.CommentId;
+            }
         }
 
-        [Then(@"A new comment is available to user through get article request")]
+        [Then(@"Test comments are available to user through get article request")]
         public void ThenANewCommentIsAvailableToUserThroughGetArticleRequest()
         {
             var newArticleData = (ArticleData)ScenarioContext.Current["NewArticle"];
-            var newCommentData = (CommentData)ScenarioContext.Current["NewComment"];
+            var testComments = (IList<CommentData>)ScenarioContext.Current["TestComments"];
 
             var request = new GetArticleRequest
             {
@@ -122,12 +168,16 @@ namespace Infotecs.MiniJournal.Specs
             var response = MiniJournalContext.ServiceClient.Get<GetArticleResponse>(request);
 
             Assert.IsNotNull(response, "Response from GetArticle returned null");
-            Assert.That(
-                response.Article.Comments.Any(comment =>
-                    comment.Id == newCommentData.Id &&
-                    comment.User == newCommentData.User &&
-                    comment.Text == newCommentData.Text),
-                "Test comment for test article is not found");
+
+            foreach (CommentData testComment in testComments)
+            {
+                Assert.That(
+                    response.Article.Comments.Any(comment =>
+                        comment.Id == testComment.Id &&
+                        comment.User == testComment.User &&
+                        comment.Text == testComment.Text),
+                    "Test comment for test article is not found");
+            }
         }
 
         [Then(@"A test article is deleted")]
@@ -157,10 +207,11 @@ namespace Infotecs.MiniJournal.Specs
             {
                 ArticleId = articleData.Id
             };
-            var response = MiniJournalContext.ServiceClient.Get<GetArticleResponse>(request);
 
-            Assert.IsNotNull(response);
-            Assert.IsNull(response.Article, "Test article should not be available after detele");
+            Assert.Throws<WebFaultException>(() =>
+            {
+                MiniJournalContext.ServiceClient.Get<GetArticleResponse>(request);
+            }, "Test article should not be available after detele");
         }
     }
 }

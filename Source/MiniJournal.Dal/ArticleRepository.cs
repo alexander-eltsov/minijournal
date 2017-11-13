@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Infotecs.MiniJournal.Models;
+using LanguageExt;
 using NHibernate;
+using NHibernate.Util;
 
 namespace Infotecs.MiniJournal.Dal
 {
@@ -26,18 +30,17 @@ namespace Infotecs.MiniJournal.Dal
             }
         }
 
-        public Article GetArticle(int articleId)
+        public Option<Article> GetArticle(int articleId)
         {
             using (var session = sessionFactory.OpenSession())
             {
-                Article article = session
+                return session
                     .QueryOver<Article>()
                     .Fetch(x => x.Comments).Eager
                     .Where(x => x.Id == articleId)
+                    //.Where(x => x.Id == 99999)
                     .List()
-                    .FirstOrDefault();
-
-                return article;
+                    .ToOption();
             }
         }
 
@@ -82,8 +85,8 @@ namespace Infotecs.MiniJournal.Dal
         {
             using (var session = sessionFactory.OpenSession())
             {
-                var article = session.Load<Comment>(commentId);
-                session.Delete(article);
+                var comment = session.Load<Comment>(commentId);
+                session.Delete(comment);
                 session.Flush();
             }
         }
