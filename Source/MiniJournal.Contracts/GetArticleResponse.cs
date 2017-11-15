@@ -8,13 +8,5 @@ namespace Infotecs.MiniJournal.Contracts
     {
         [DataMember]
         public ArticleData Article { get; set; }
-
-
-        //[DataMember]
-        //public bool HasError { get; set; }
-
-        [DataMember]
-        public Exception Error { get; set; }
-
     }
 }

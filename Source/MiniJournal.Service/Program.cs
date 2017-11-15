@@ -2,39 +2,27 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Autofac;
-using Infotecs.MiniJournal.Contracts;
-using Infotecs.MiniJournal.Service.MessageProcessors;
-using Nelibur.ServiceModel.Services;
 using Nelibur.ServiceModel.Services.Default;
+using RabbitMQ.Client;
 
 namespace Infotecs.MiniJournal.Service
 {
     public class Program
     {
-        private static void ConfigureService(IContainer container)
-        {
-            NeliburRestService.Configure(x =>
-            {
-                x.Bind<GetArticleHeadersRequest, ArticleHeaderProcessor>(() => container.Resolve<ArticleHeaderProcessor>());
-
-                x.Bind<GetArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
-                x.Bind<CreateArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
-                x.Bind<UpdateArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
-                x.Bind<DeleteArticleRequest, ArticleProcessor>(() => container.Resolve<ArticleProcessor>());
-
-                x.Bind<AddCommentRequest, CommentProcessor>(() => container.Resolve<CommentProcessor>());
-                x.Bind<RemoveCommentRequest, CommentProcessor>(() => container.Resolve<CommentProcessor>());
-            });
-        }
-
         private static void Main(string[] args)
         {
             var containerBuilder = new MiniJournalContainerBuilder();
-            using (var container = containerBuilder.Build())
-            {
-                ConfigureService(container);
+            var container = containerBuilder.Build();
 
+            var connectionFactory = container.Resolve<IConnectionFactory>();
+            using (var connection = connectionFactory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
                 var host = new WebServiceHost(typeof(JsonServicePerCall));
+
+                var notificationService = container.Resolve<INotificationService>(new TypedParameter(typeof(IModel), channel));
+                notificationService.Initialize();
+
                 try
                 {
                     host.Open();

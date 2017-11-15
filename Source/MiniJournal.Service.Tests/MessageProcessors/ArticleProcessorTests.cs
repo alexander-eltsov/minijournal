@@ -13,7 +13,7 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
     {
         private class FakeArticleProcessor : ArticleProcessor
         {
-            public FakeArticleProcessor(IArticleRepository articleRepository) : base(articleRepository, new MiniJournalMapper())
+            public FakeArticleProcessor(IArticleRepository articleRepository) : base(articleRepository, new MiniJournalMapper(), new Mock<INotificationService>().Object)
             {
             }
 

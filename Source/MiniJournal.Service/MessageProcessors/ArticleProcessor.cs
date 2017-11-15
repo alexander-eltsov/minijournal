@@ -4,6 +4,7 @@ using System.Net;
 using System.ServiceModel.Web;
 using FluentValidation;
 using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Contracts.Notification;
 using Infotecs.MiniJournal.Dal;
 using Infotecs.MiniJournal.Models;
 using Infotecs.MiniJournal.Service.Validators;
@@ -19,14 +20,17 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
     {
         private readonly IArticleRepository articleRepository;
         private readonly IMapper mapper;
+        private readonly INotificationService notificationService;
         private readonly AbstractValidator<Article> articleValidator;
 
         public ArticleProcessor(
             IArticleRepository articleRepository,
-            IMapper mapper)
+            IMapper mapper,
+            INotificationService notificationService)
         {
             this.articleRepository = articleRepository;
             this.mapper = mapper;
+            this.notificationService = notificationService;
             articleValidator = new ArticleValidator()
                 .ChainValidator(new ArticleIsUniqueValidator(articleRepository));
         }
@@ -51,6 +55,11 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
             ValidateArticle(articleModel);
             articleRepository.CreateArticle(articleModel);
 
+            notificationService.Notify(new ArticleCreatedMessage
+            {
+                ArticleId = articleModel.Id
+            });
+
             return new CreateArticleResponse
             {
                 ArticleId = articleModel.Id
@@ -63,12 +72,22 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
             ValidateArticle(articleModel);
             articleRepository.UpdateArticle(articleModel);
 
+            notificationService.Notify(new ArticleUpdatedMessage
+            {
+                ArticleId = articleModel.Id
+            });
+
             return new UpdateArticleResponse();
         }
 
         public void DeleteOneWay(DeleteArticleRequest request)
         {
             articleRepository.DeleteArticle(request.ArticleId);
+
+            notificationService.Notify(new ArticleDeletedMessage
+            {
+                ArticleId = request.ArticleId
+            });
         }
 
         protected virtual void ValidateArticle(Article article)

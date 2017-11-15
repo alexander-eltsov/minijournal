@@ -38,7 +38,6 @@ namespace Infotecs.MiniJournal.Dal
                     .QueryOver<Article>()
                     .Fetch(x => x.Comments).Eager
                     .Where(x => x.Id == articleId)
-                    //.Where(x => x.Id == 99999)
                     .List()
                     .ToOption();
             }

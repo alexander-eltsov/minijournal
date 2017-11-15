@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Infotecs.MiniJournal.Application
+namespace Infotecs.MiniJournal.Application.Interfaces
 {
     public interface ILogger
     {

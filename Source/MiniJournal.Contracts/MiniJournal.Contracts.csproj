@@ -36,6 +36,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddCommentRequest.cs" />
@@ -51,6 +52,15 @@
     <Compile Include="GetArticleResponse.cs" />
     <Compile Include="HeaderData.cs" />
     <Compile Include="IArticleService.cs" />
+    <Compile Include="Notification\ArticleCreatedMessage.cs" />
+    <Compile Include="Notification\ArticleDeletedMessage.cs" />
+    <Compile Include="Notification\ArticleUpdatedMessage.cs" />
+    <Compile Include="Notification\CommentAddedMessage.cs" />
+    <Compile Include="Notification\CommentMessage.cs" />
+    <Compile Include="Notification\CommentRemovedMessage.cs" />
+    <Compile Include="Notification\NotificationMessageSerializer.cs" />
+    <Compile Include="Notification\NotificationMessage.cs" />
+    <Compile Include="Notification\ArticleMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoveCommentRequest.cs" />
     <Compile Include="UpdateArticleRequest.cs" />

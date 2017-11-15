@@ -1,45 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Threading;
 using System.Windows.Input;
+using System.Windows.Markup;
+using Autofac;
 using Infotecs.MiniJournal.Application.Commands;
+using Infotecs.MiniJournal.Application.Interfaces;
 using Infotecs.MiniJournal.Application.Views;
 using Infotecs.MiniJournal.Contracts;
+using Infotecs.MiniJournal.Contracts.Notification;
 
 namespace Infotecs.MiniJournal.Application.ViewModels
 {
-    public class ArticlesViewModel : BaseViewModel
+    public class ArticlesViewModel : BaseViewModel, IDisposable
     {
+        private readonly SynchronizationContext synchronizationContext;
         private readonly IArticleService articleService;
-        private readonly ILogger logger;
+        private readonly INotificationService notificationService;
+        private readonly IComponentContext componentContext;
         private HeaderData selectedHeader;
         private ArticleData loadedArticle;
         private CommentData selectedArticleComment;
 
         public ArticlesViewModel(
             IArticleService articleService,
-            ILogger logger)
+            INotificationService notificationService,
+            IComponentContext componentContext)
         {
             if (articleService == null)
             {
                 throw new ArgumentNullException(nameof(articleService));
             }
 
+            synchronizationContext = SynchronizationContext.Current;
+
             this.articleService = articleService;
-            this.logger = logger;
+            this.notificationService = notificationService;
+            this.componentContext = componentContext;
             Headers = new ObservableCollection<HeaderData>();
 
-            LoadHeadersCommand = new RelayCommand(parameter => LoadHeaders());
+            LoadHeadersCommand = new RelayCommand(parameter => ReloadHeaders());
             AddArticleCommand = new RelayCommand(parameter => AddArticle());
             SaveArticleCommand = new RelayCommand(parameter => SaveSelectedArticle());
             DeleteArticleCommand = new RelayCommand(parameter => DeleteSelectedArticle());
             AddCommentCommand = new RelayCommand(parameter => AddComment());
             DeleteCommentCommand = new RelayCommand(parameter => DeleteComment());
+
+            SubscribeEvents();
         }
 
         public bool CanModifyArticle => SelectedHeader != null;
 
-        public ICollection<HeaderData> Headers { get; }
+        public ObservableCollection<HeaderData> Headers { get; }
 
         public HeaderData SelectedHeader
         {
@@ -54,17 +69,9 @@ namespace Infotecs.MiniJournal.Application.ViewModels
                 }
                 catch (Exception exception)
                 {
-                    logger.LogError(exception);
-                    MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                    notificationService.NotifyError(exception.Message);
                 }
             }
-        }
-
-        private void ReloadArticle()
-        {
-            LoadedArticle = selectedHeader == null
-                ? null
-                : articleService.GetArticle(selectedHeader.Id);
         }
 
         public ArticleData LoadedArticle
@@ -100,23 +107,97 @@ namespace Infotecs.MiniJournal.Application.ViewModels
 
         public ICommand DeleteCommentCommand { get; }
 
-        private void LoadHeaders()
+        public void Dispose()
+        {
+            UnsubscribeEvents();
+        }
+
+        private void SubscribeEvents()
+        {
+            notificationService.Subscribe<ArticleCreatedMessage>(OnArticleCreated);
+            notificationService.Subscribe<ArticleUpdatedMessage>(OnArticleUpdated);
+            notificationService.Subscribe<ArticleDeletedMessage>(OnArticleDeleted);
+            notificationService.Subscribe<CommentMessage>(OnCommentChanged);
+        }
+
+        private void UnsubscribeEvents()
+        {
+            notificationService.Unsubscribe<ArticleCreatedMessage>(OnArticleCreated);
+            notificationService.Unsubscribe<ArticleUpdatedMessage>(OnArticleUpdated);
+            notificationService.Unsubscribe<ArticleDeletedMessage>(OnArticleDeleted);
+            notificationService.Unsubscribe<CommentMessage>(OnCommentChanged);
+        }
+
+        private void OnArticleCreated(ArticleCreatedMessage message)
+        {
+            synchronizationContext.Post(state => ReloadHeaders(), null);
+        }
+
+        private void OnArticleUpdated(ArticleUpdatedMessage message)
+        {
+            synchronizationContext.Post(state =>
+            {
+                var msg = (ArticleUpdatedMessage) state;
+                if (loadedArticle != null && loadedArticle.Id == msg.ArticleId)
+                {
+                    ReloadArticle();
+                }
+                ReloadHeaders();
+            }, message);
+        }
+
+        private void OnArticleDeleted(ArticleDeletedMessage message)
+        {
+            synchronizationContext.Post(state =>
+            {
+                var msg = (ArticleDeletedMessage) state;
+                if (loadedArticle != null && loadedArticle.Id == msg.ArticleId)
+                {
+                    LoadedArticle = null;
+                }
+                ReloadHeaders();
+            }, message);
+        }
+
+        private void OnCommentChanged(CommentMessage message)
+        {
+            synchronizationContext.Post(state =>
+            {
+                var msg = (CommentMessage) state;
+                if (loadedArticle != null && loadedArticle.Id == msg.ParentId)
+                {
+                    ReloadArticle();
+                }
+            }, message);
+        }
+
+        private void ReloadArticle()
+        {
+            LoadedArticle = selectedHeader == null
+                ? null
+                : articleService.GetArticle(selectedHeader.Id);
+        }
+
+        private void ReloadHeaders()
         {
             try
             {
+                var headerBeforeRefresh = SelectedHeader;
+
                 Headers.Clear();
-
                 IEnumerable<HeaderData> headersFromService = articleService.GetArticleHeaders();
-
                 foreach (HeaderData header in headersFromService)
                 {
                     Headers.Add(header);
                 }
+
+                SelectedHeader = headerBeforeRefresh == null
+                    ? Headers.FirstOrDefault()
+                    : Headers.FirstOrDefault(header => header.Id == headerBeforeRefresh.Id);
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception.Message);
             }
         }
 
@@ -131,13 +212,10 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.CreateArticle(newArticle);
-
-                LoadHeaders();
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception);
             }
         }
 
@@ -151,8 +229,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception.Message);
             }
         }
 
@@ -161,20 +238,17 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             try
             {
                 articleService.DeleteArticle(LoadedArticle.Id);
-
-                LoadHeaders();
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception.Message);
             }
         }
 
         private void AddComment()
         {
-            var viewModel = MiniJournalDependencyResolver.Instance().Resolve<AddCommentViewModel>();
-            var view = MiniJournalDependencyResolver.Instance().Resolve<IDialogView>();
+            var viewModel = componentContext.Resolve<AddCommentViewModel>();
+            var view = componentContext.Resolve<IDialogView>();
 
             viewModel.User = Environment.UserName;
             view.BindViewModel(viewModel);
@@ -198,8 +272,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception.Message);
             }
         }
 
@@ -213,8 +286,7 @@ namespace Infotecs.MiniJournal.Application.ViewModels
             }
             catch (Exception exception)
             {
-                logger.LogError(exception);
-                MiniJournalDependencyResolver.Instance().Resolve<INotificationService>().NotifyError(exception.Message);
+                notificationService.NotifyError(exception.Message);
             }
         }
     }

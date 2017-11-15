@@ -1,10 +1,17 @@
 ﻿using System;
+using Autofac;
 
 namespace Infotecs.MiniJournal.Application.Views
 {
     public class AddCommentViewDialog : IDialogView
     {
+        private readonly IComponentContext componentContext;
         private AddCommentView view;
+
+        public AddCommentViewDialog(IComponentContext componentContext)
+        {
+            this.componentContext = componentContext;
+        }
 
         public void BindViewModel<TViewModel>(TViewModel viewModel)
         {
@@ -20,7 +27,7 @@ namespace Infotecs.MiniJournal.Application.Views
         {
             if (view == null)
             {
-                view = MiniJournalDependencyResolver.Instance().Resolve<AddCommentView>();
+                view = componentContext.Resolve<AddCommentView>();
                 view.Closed += new EventHandler(ViewClosed);
             }
             return view;

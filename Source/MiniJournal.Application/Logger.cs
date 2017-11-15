@@ -3,6 +3,7 @@ using Infotecs.Opus;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using ILogger = Infotecs.MiniJournal.Application.Interfaces.ILogger;
 
 namespace Infotecs.MiniJournal.Application
 {

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using Autofac;
+using Infotecs.MiniJournal.Application.Interfaces;
 using Infotecs.MiniJournal.Application.ViewModels;
+using RabbitMQ.Client;
 
 namespace Infotecs.MiniJournal.Application
 {
@@ -10,11 +13,13 @@ namespace Infotecs.MiniJournal.Application
     /// </summary>
     public partial class App : System.Windows.Application
     {
-        private readonly IDependencyResolver resolver;
+        private readonly IContainer container;
 
         public App()
         {
-            resolver = new MiniJournalDependencyResolver();
+            var containerBuilder = new AutofacContainerBuilder();
+            container = containerBuilder.Build();
+
             DispatcherUnhandledException += OnDispatcherUnhandledException;
         }
 
@@ -22,14 +27,23 @@ namespace Infotecs.MiniJournal.Application
         {
             base.OnStartup(e);
 
-            var logger = resolver.Resolve<ILogger>();
-            logger.LogEnvironmentInfo();
-
-            var window = new Views.MainWindow
+            var connectionFactory = container.Resolve<IConnectionFactory>();
+            using (var connection = connectionFactory.CreateConnection())
+            using (var channel = connection.CreateModel())
             {
-                DataContext = resolver.Resolve<ArticlesViewModel>()
-            };
-            window.Show();
+                var logger = container.Resolve<ILogger>();
+                logger.LogEnvironmentInfo();
+
+                var notificationService = container.Resolve<INotificationService>(new TypedParameter(typeof(IModel), channel));
+                notificationService.Initialize();
+
+                var window = new Views.MainWindow
+                {
+                    DataContext = container.Resolve<ArticlesViewModel>()
+                };
+
+                window.ShowDialog();
+            }
         }
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs args)
@@ -37,7 +51,7 @@ namespace Infotecs.MiniJournal.Application
             bool errorLogged = false;
             try
             {
-                var logger = resolver.Resolve<ILogger>();
+                var logger = container.Resolve<ILogger>();
                 logger.LogError(args.Exception);
                 errorLogged = true;
             }
@@ -45,20 +59,7 @@ namespace Infotecs.MiniJournal.Application
             {
                 // ignored
             }
-
-            bool errorNotified = false;
-            try
-            {
-                var notificationService = resolver.Resolve<INotificationService>();
-                notificationService.NotifyError(args.Exception.Message);
-                errorNotified = true;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            args.Handled = errorLogged || errorNotified;
+            args.Handled = errorLogged;
         }
     }
 }

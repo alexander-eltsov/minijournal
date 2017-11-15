@@ -1,9 +1,11 @@
 ﻿using Autofac;
+using Infotecs.MiniJournal.Application.Interfaces;
 using Infotecs.MiniJournal.Application.Properties;
 using Infotecs.MiniJournal.Application.ViewModels;
 using Infotecs.MiniJournal.Application.Views;
 using Infotecs.MiniJournal.Contracts;
 using Nelibur.ServiceModel.Clients;
+using RabbitMQ.Client;
 
 namespace Infotecs.MiniJournal.Application
 {
@@ -13,12 +15,14 @@ namespace Infotecs.MiniJournal.Application
         {
             var builder = new ContainerBuilder();
 
-            // system
-            builder.Register(context => MiniJournalDependencyResolver.Instance()).As<IDependencyResolver>();
             builder.RegisterType<Logger>().As<ILogger>();
-            builder.RegisterType<NotifiactionService>().As<INotificationService>();
+
+            // message broker
+            builder.Register(context => new ConnectionFactory { HostName = "localhost" })
+                .As<IConnectionFactory>();
 
             // services
+            builder.RegisterType<RabbitMqNotificationService>().As<INotificationService>().SingleInstance();
             builder.Register(context =>
             {
                 var serviceClient = new JsonServiceClient(Settings.Default.ServiceAddress);
