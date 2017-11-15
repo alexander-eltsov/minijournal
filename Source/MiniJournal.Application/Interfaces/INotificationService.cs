@@ -12,11 +12,6 @@ namespace Infotecs.MiniJournal.Application.Interfaces
         void Subscribe<TMessage>(Action<TMessage> handler) where TMessage : NotificationMessage;
         void Unsubscribe<TMessage>(Action<TMessage> handler) where TMessage : NotificationMessage;
 
-        IObservable<TEvent> GetEvent<TEvent>() where TEvent : NotificationMessage;
-    }
-
-    public interface ISubscriber
-    {
-        
+        IObservable<TMessage> GetEvent<TMessage>() where TMessage : NotificationMessage;
     }
 }

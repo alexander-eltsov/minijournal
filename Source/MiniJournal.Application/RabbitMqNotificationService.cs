@@ -75,7 +75,6 @@ namespace Infotecs.MiniJournal.Application
         public void Subscribe<TMessage>(Action<TMessage> handler) where TMessage : NotificationMessage
         {
             var stop = new Subject<bool>();
-            stop.OnNext(true);
             stopsDictionary.Add(handler, stop);
 
             subject.OfType<TMessage>()
