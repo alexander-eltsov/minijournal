@@ -33,7 +33,6 @@ namespace Infotecs.MiniJournal.Application
                 exchange: exchnageName,
                 type: exchnageType);
 
-
             var queueName = channel.QueueDeclare().QueueName;
             channel.QueueBind(
                 queue: queueName,
