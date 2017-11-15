@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Infotecs.MiniJournal.Contracts
 {
     [DataContract]
-    public sealed class GetArticleHeadersResponse
+    public sealed class GetArticleHeadersResponse : Response
     {
         [DataMember]
         public IEnumerable<HeaderData> Headers { get; set; }

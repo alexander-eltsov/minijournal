@@ -18,6 +18,7 @@ namespace Infotecs.MiniJournal.Application
         private const string exchnageType = "fanout";
         private readonly Subject<NotificationMessage> subject;
         private readonly Dictionary<object, Subject<bool>> stopsDictionary;
+        private EventingBasicConsumer consumer;
 
         public RabbitMqNotificationService(IModel channel, ILogger logger)
         {
@@ -29,6 +30,11 @@ namespace Infotecs.MiniJournal.Application
 
         public void Initialize()
         {
+            if (this.consumer != null)
+            {
+                return;
+            }
+
             channel.ExchangeDeclare(
                 exchange: exchnageName,
                 type: exchnageType);
@@ -38,8 +44,11 @@ namespace Infotecs.MiniJournal.Application
                 queue: queueName,
                 exchange: exchnageName,
                 routingKey: "");
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += OnConsumerReactive;
+
+            consumer = new EventingBasicConsumer(channel);
+
+            SubscribeConsumerEvent();
+
             channel.BasicConsume(
                 queue: queueName,
                 autoAck: true,
@@ -91,6 +100,7 @@ namespace Infotecs.MiniJournal.Application
         public void Dispose()
         {
             subject?.Dispose();
+            UnsubscribeConsumerEvent();
         }
 
         private void OnConsumerReactive(object sender, BasicDeliverEventArgs args)
@@ -99,6 +109,16 @@ namespace Infotecs.MiniJournal.Application
             var serializer = new NotificationMessageSerializer();
             NotificationMessage notificationMessage = serializer.Deserialize(body);
             subject.OnNext(notificationMessage);
+        }
+
+        private void SubscribeConsumerEvent()
+        {
+            consumer.Received += OnConsumerReactive;
+        }
+
+        private void UnsubscribeConsumerEvent()
+        {
+            consumer.Received -= OnConsumerReactive;
         }
     }
 }

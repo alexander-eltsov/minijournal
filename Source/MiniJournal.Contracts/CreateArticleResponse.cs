@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Infotecs.MiniJournal.Contracts
 {
     [DataContract]
-    public sealed class CreateArticleResponse
+    public sealed class CreateArticleResponse : Response
     {
         [DataMember]
         public int ArticleId { get; set; }

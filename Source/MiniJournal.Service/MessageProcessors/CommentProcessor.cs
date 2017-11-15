@@ -41,7 +41,15 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
             var comment = mapper
                 .Map<CommentData, Comment>(request.Comment);
 
-            ValidateComment(comment);
+            var validationResult = commentValidator.Validate(comment);
+            if (!validationResult.IsValid)
+            {
+                return new AddCommentResponse
+                {
+                    Error = validationResult.Errors.First().ErrorMessage
+                };
+            }
+
             article.AddComment(comment);
             articleRepository.CreateArticleComment(comment);
 
@@ -67,15 +75,6 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
                 ParentId = request.ArticleId,
                 CommmentId = request.CommentId
             });
-        }
-
-        private void ValidateComment(Comment comment)
-        {
-            var validationResult = commentValidator.Validate(comment);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors.First().ErrorMessage);
-            }
         }
     }
 }

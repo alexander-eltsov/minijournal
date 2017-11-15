@@ -52,7 +52,16 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
         public object Post(CreateArticleRequest request)
         {
             var articleModel = mapper.Map<ArticleData, Article>(request.NewArticle);
-            ValidateArticle(articleModel);
+
+            var validationResult = articleValidator.Validate(articleModel);
+            if (!validationResult.IsValid)
+            {
+                return new CreateArticleResponse
+                {
+                    Error = validationResult.Errors.First().ErrorMessage
+                };
+            }
+
             articleRepository.CreateArticle(articleModel);
 
             notificationService.Notify(new ArticleCreatedMessage
@@ -69,7 +78,16 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
         public object Put(UpdateArticleRequest request)
         {
             var articleModel = mapper.Map<ArticleData, Article>(request.Article);
-            ValidateArticle(articleModel);
+
+            var validationResult = articleValidator.Validate(articleModel);
+            if (!validationResult.IsValid)
+            {
+                return new UpdateArticleResponse
+                {
+                    Error = validationResult.Errors.First().ErrorMessage
+                };
+            }
+
             articleRepository.UpdateArticle(articleModel);
 
             notificationService.Notify(new ArticleUpdatedMessage
@@ -88,15 +106,6 @@ namespace Infotecs.MiniJournal.Service.MessageProcessors
             {
                 ArticleId = request.ArticleId
             });
-        }
-
-        protected virtual void ValidateArticle(Article article)
-        {
-            var validationResult = articleValidator.Validate(article);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors.First().ErrorMessage);
-            }
         }
     }
 }

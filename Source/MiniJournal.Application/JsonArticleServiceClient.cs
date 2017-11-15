@@ -18,6 +18,10 @@ namespace Infotecs.MiniJournal.Application
         {
             var request = new GetArticleHeadersRequest();
             var response = serviceClient.Get<GetArticleHeadersResponse>(request);
+            if (response.HasError)
+            {
+                throw new Exception(response.Error);
+            }
 
             return response.Headers;
         }
@@ -29,6 +33,10 @@ namespace Infotecs.MiniJournal.Application
                 ArticleId = articleId
             };
             var response = serviceClient.Get<GetArticleResponse>(request);
+            if (response.HasError)
+            {
+                throw new Exception(response.Error);
+            }
 
             return response.Article;
         }
@@ -40,6 +48,10 @@ namespace Infotecs.MiniJournal.Application
                 NewArticle = article
             };
             var response = serviceClient.Post<CreateArticleResponse>(request);
+            if (response.HasError)
+            {
+                throw new Exception(response.Error);
+            }
         }
 
         public void UpdateArticle(ArticleData article)
@@ -49,6 +61,10 @@ namespace Infotecs.MiniJournal.Application
                 Article = article
             };
             var response = serviceClient.Put<UpdateArticleResponse>(request);
+            if (response.HasError)
+            {
+                throw new Exception(response.Error);
+            }
         }
 
         public void DeleteArticle(int articleId)
@@ -68,6 +84,10 @@ namespace Infotecs.MiniJournal.Application
                 Comment = comment
             };
             var response = serviceClient.Post<AddCommentResponse>(request);
+            if (response.HasError)
+            {
+                throw new Exception(response.Error);
+            }
         }
 
         public void RemoveComment(int articleId, int commentId)
