@@ -3,6 +3,7 @@
 Background:
 	Given Test server is running
 
+@NUnitRunner
 Scenario: Create Test Article with Comments, then Delete all
 	Given Test article with caption 'Test article 1' and text 'Some text'
 	Given Test article's caption has not been already occupied

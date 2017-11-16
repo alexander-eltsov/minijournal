@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="RunUnitTests">
+    <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+        <NUnitMsbuildPath Condition="'$(NUnitMsbuildPath)' == ''">$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.7.0\tools</NUnitMsbuildPath>
+        <UnitTestsPath Condition="'$(UnitTestsPath)' == ''">$(MSBuildProjectDirectory)\Out\UnitTests\$(Configuration)</UnitTestsPath>
+    </PropertyGroup>
+    
+    <Target Name="RunUnitTests" DependsOnTargets="RunNUnitTests" />
+
+    <Target Name="RunNUnitTests">
+        <ItemGroup>
+            <NUnitAssemblies Include="$(UnitTestsPath)\Infotecs.*.Tests.dll" />
+        </ItemGroup>
+	<NUnit3 Assemblies="@(NUnitAssemblies)"
+	        ToolPath="$(NUnitMsbuildPath)"
+                OutputXmlFile="$(UnitTestsPath)\UnitTestResults.html"/>
+    </Target>
+</Project>

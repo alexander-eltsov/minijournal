@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="RunSpecFlowTests">
+    <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+        <NUnitMsbuildPath Condition="'$(NUnitMsbuildPath)' == ''">$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.7.0\tools</NUnitMsbuildPath>
+        <SpecFlowTestsPath Condition="'$(SpecFlowTestsPath)' == ''">$(MSBuildProjectDirectory)\Out\SpecFlowTests\$(Configuration)</SpecFlowTestsPath>
+    </PropertyGroup>
+    
+    <Target Name="RunSpecFlowTests" DependsOnTargets="RunSpecFlowTests" />
+
+    <Target Name="RunSpecFlowTests">
+        <ItemGroup>
+            <NUnitAssemblies Include="$(SpecFlowTestsPath)\Infotecs.*.Specs.dll" />
+        </ItemGroup>
+	<NUnit3 Assemblies="@(NUnitAssemblies)"
+	        ToolPath="$(NUnitMsbuildPath)"
+	        Where="cat=NUnitRunner"
+                OutputXmlFile="$(SpecFlowTestsPath)\SpecFlowTestResults.html"/>
+    </Target>
+</Project>

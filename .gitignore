@@ -35,3 +35,10 @@ bld/
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+
+# Build
+*.metaproj
+*.metaproj.tmp
+GlobalAssemblyInfo.cs
+build.bat
+build.report
