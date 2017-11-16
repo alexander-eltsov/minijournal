@@ -74,6 +74,8 @@ namespace Infotecs.MiniJournal.Application
 
         public void Subscribe<TMessage>(Action<TMessage> handler) where TMessage : NotificationMessage
         {
+            Unsubscribe(handler);
+
             var stop = new Subject<bool>();
             stopsDictionary.Add(handler, stop);
 
@@ -85,11 +87,17 @@ namespace Infotecs.MiniJournal.Application
 
         public void Unsubscribe<TMessage>(Action<TMessage> handler) where TMessage : NotificationMessage
         {
+            if (!stopsDictionary.ContainsKey(handler))
+            {
+                return;
+            }
+
             try
             {
                 Subject<bool> stop = stopsDictionary[handler];
                 stop.OnNext(true);
                 stop.Dispose();
+                stopsDictionary.Remove(handler);
             }
             catch (ObjectDisposedException)
             {
