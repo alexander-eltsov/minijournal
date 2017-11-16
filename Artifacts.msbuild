@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project DefaultTargets="Rebuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+    <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+    <PropertyGroup>
+        <OutDir Condition="'$(OutDir)'==''">$(MSBuildThisFileDirectory)\Out</OutDir>
+        <Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+        <ServerArtifactsOutDir Condition="'$(ServerArtifactsOutDir)'==''">$(OutDir)\MiniJournal.Service\$(Configuration)</ServerArtifactsOutDir>
+        <ClientArtifactsOutDir Condition="'$(ClientArtifactsOutDir)'==''">$(OutDir)\MiniJournal.Application\$(Configuration)</ClientArtifactsOutDir>
+        <InstallerArtifactsOutDir Condition="'$(InstallerArtifactsOutDir)'==''">$(OutDir)\Installer\$(Configuration)</InstallerArtifactsOutDir>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="ArchiveServer;ArchiveClient;MoveArchives" />
+    <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+    <ItemGroup>
+        <ArchiveServerTask Include="MiniJournal.Service">
+            <Path>$(ServerArtifactsOutDir)</Path>
+        </ArchiveServerTask>
+        <ArchiveClientTask Include="MiniJournal.Application">
+            <Path>$(ClientArtifactsOutDir)</Path>
+        </ArchiveClientTask>
+    </ItemGroup>
+
+    <Target Name="Clean">
+        <ItemGroup>
+            <ArtifactServerFiles Include="$(ServerArtifactsOutDir)\*.zip" />
+            <ArtifactClientFiles Include="$(ClientArtifactsOutDir)\*.zip" />
+            <ArtifactInstallerFiles Include="$(InstallerArtifactsOutDir)\*.zip" />
+        </ItemGroup>
+        <Delete Files="@(ArtifactServerFiles)" />
+        <Delete Files="@(ArtifactClientFiles)" />
+        <Delete Files="@(ArtifactInstallerFiles)" />
+    </Target>
+    
+    <Target Name="ArchiveServer" Outputs="%(ArchiveServerTask.Identity)">
+        <Message Text="Starting archive server distributives %(ArchiveServerTask.Identity) ..." />
+        <Message Text="Path %(ArchiveServerTask.Path)" />
+
+        <ItemGroup>
+            <ServerFiles Include="%(ArchiveServerTask.Path)\**\*.*" />
+        </ItemGroup>
+
+        <Zip Files="@(ServerFiles)"
+             WorkingDirectory="%(ArchiveServerTask.Path)"
+             Condition="Exists('%(ArchiveServerTask.Path)')"
+             ZipFileName="$(ServerArtifactsOutDir)\server.zip" />
+
+        <Message Text="Server distributive %(ArchiveServerTask.Identity) successfully archived"
+                 Condition="Exists('%(ArchiveServerTask.Path)')" />
+
+        <Message Text="Server distributive %(ArchiveServerTask.Identity) skipped. Folder does not exist."
+                 Condition="!Exists('%(ArchiveServerTask.Path)')" />
+    </Target>
+
+    <Target Name="ArchiveClient" Outputs="%(ArchiveClientTask.Identity)">
+        <Message Text="Starting archive client distributives %(ArchiveClientTask.Identity) ..." />
+        <Message Text="Path %(ArchiveClientTask.Path)" />
+
+        <ItemGroup>
+            <ClientFiles Include="%(ArchiveClientTask.Path)\**\*.*" />
+        </ItemGroup>
+
+        <Zip Files="@(ClientFiles)"
+             WorkingDirectory="%(ArchiveClientTask.Path)"
+             Condition="Exists('%(ArchiveClientTask.Path)')"
+             ZipFileName="$(ClientArtifactsOutDir)\client.zip" />
+
+        <Message Text="Client distributive %(ArchiveClientTask.Identity) successfully archived"
+                 Condition="Exists('%(ArchiveClientTask.Path)')" />
+
+        <Message Text="Client distributive %(ArchiveClientTask.Identity) skipped. Folder does not exist."
+                 Condition="!Exists('%(ArchiveClientTask.Path)')" />
+    </Target>
+
+    <Target Name="MoveArchives">
+        <ItemGroup>
+            <ArtifactServerFiles Include="$(ServerArtifactsOutDir)\*.zip" />
+            <ArtifactClientFiles Include="$(ClientArtifactsOutDir)\*.zip" />
+        </ItemGroup>
+        <Move SourceFiles="@(ArtifactServerFiles)"
+              DestinationFolder="$(InstallerArtifactsOutDir)"/>
+        <Move SourceFiles="@(ArtifactClientFiles)"
+              DestinationFolder="$(InstallerArtifactsOutDir)"/>
+    </Target>
+
+</Project>
+
+
