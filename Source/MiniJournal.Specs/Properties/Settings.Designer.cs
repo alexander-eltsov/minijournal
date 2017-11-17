@@ -25,7 +25,7 @@ namespace Infotecs.MiniJournal.Specs.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Projects\\MiniJournal\\Database")]
+        [global::System.Configuration.DefaultSettingValueAttribute("..\\..\\..\\DataBase\\")]
         public string DatabaseDir {
             get {
                 return ((string)(this["DatabaseDir"]));

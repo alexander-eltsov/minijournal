@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="DatabaseDir" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">D:\Projects\MiniJournal\Database</Value>
+      <Value Profile="(Default)">..\..\..\DataBase\</Value>
     </Setting>
     <Setting Name="ServiceAddress" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://localhost:8083/article</Value>

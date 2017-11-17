@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
+using NUnit.Framework;
 
 namespace Infotecs.MiniJournal.Specs
 {
@@ -16,20 +17,25 @@ namespace Infotecs.MiniJournal.Specs
             StringBuilder sb = new StringBuilder();
             foreach (string scriptName in scriptNames)
             {
-                var scriptBody = GetEmbeddedScript(scriptName);
-                if (!string.IsNullOrWhiteSpace(scriptBody))
+                try
                 {
-                    sb.AppendLine(scriptBody);
-                }
-                else
-                {
-                    scriptBody = GetDatabaseFolderScript(scriptName);
+                    var scriptBody = GetEmbeddedScript(scriptName);
                     if (!string.IsNullOrWhiteSpace(scriptBody))
                     {
                         sb.AppendLine(scriptBody);
                     }
                     else
-                        throw new IOException($"Script {scriptName} not found");
+                    {
+                        scriptBody = GetDatabaseFolderScript(scriptName);
+                        if (!string.IsNullOrWhiteSpace(scriptBody))
+                        {
+                            sb.AppendLine(scriptBody);
+                        }
+                    }
+                }
+                catch (IOException exception)
+                {
+                    throw new IOException($"Script {scriptName} not found", exception);
                 }
             }
             ExecuteSqlNonQuery(sb.ToString());
@@ -65,7 +71,10 @@ namespace Infotecs.MiniJournal.Specs
 
         private string GetDatabaseFolderScript(string scriptName)
         {
-            string fileName = Path.Combine(Specs.Properties.Settings.Default.DatabaseDir, scriptName);
+            var fileName = Path.Combine(
+                TestContext.CurrentContext.TestDirectory,
+                Path.Combine(Properties.Settings.Default.DatabaseDir, scriptName));
+
             return File.ReadAllText(fileName);
         }
 
