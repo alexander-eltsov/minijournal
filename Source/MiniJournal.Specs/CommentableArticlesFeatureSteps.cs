@@ -23,8 +23,7 @@ namespace Infotecs.MiniJournal.Specs
         {
             Assert.DoesNotThrow(() =>
             {
-                var request = new GetArticleHeadersRequest();
-                MiniJournalContext.ServiceClient.Get<GetArticleHeadersResponse>(request);
+                var response = InvokeGetArticleHeaders();
             }, "Ensure test server is running and available");
         }
 
@@ -43,9 +42,7 @@ namespace Infotecs.MiniJournal.Specs
         public void GivenTestArticleSCaptionHasNotBeenAlreadyOccupied()
         {
             var articleData = (ArticleData)ScenarioContext.Current["NewArticle"];
-
-            var request = new GetArticleHeadersRequest();
-            var response = MiniJournalContext.ServiceClient.Get<GetArticleHeadersResponse>(request);
+            var response = InvokeGetArticleHeaders();
 
             Assert.IsFalse(response.Headers.Any(header =>
                     header.Caption == articleData.Caption),
@@ -138,7 +135,7 @@ namespace Infotecs.MiniJournal.Specs
                 header.Id == newArticleData.Id && header.Caption == newArticleData.Caption),
                 "Header for test article is not found");
         }
-        
+
         [Then(@"Test comments for test article are created")]
         public void ThenANewCommentForTestArticleIsCreated()
         {
@@ -185,14 +182,12 @@ namespace Infotecs.MiniJournal.Specs
         {
             // no separate response class from Delete article
         }
-        
+
         [Then(@"Test Article is no longer available through get article headers request")]
         public void ThenTestArticleIsNoLongerAvailableThroughGetArticleHeadersRequest()
         {
             var articleData = (ArticleData)ScenarioContext.Current["NewArticle"];
-
-            var request = new GetArticleHeadersRequest();
-            var response = MiniJournalContext.ServiceClient.Get<GetArticleHeadersResponse>(request);
+            var response = InvokeGetArticleHeaders();
 
             Assert.IsFalse(response.Headers.Any(header =>
                 header.Id == articleData.Id && header.Caption == articleData.Caption),
@@ -212,6 +207,13 @@ namespace Infotecs.MiniJournal.Specs
             {
                 MiniJournalContext.ServiceClient.Get<GetArticleResponse>(request);
             }, "Test article should not be available after detele");
+        }
+
+        private GetArticleHeadersResponse InvokeGetArticleHeaders()
+        {
+            var request = new GetArticleHeadersRequest();
+            var response = MiniJournalContext.ServiceClient.Get<GetArticleHeadersResponse>(request);
+            return response;
         }
     }
 }

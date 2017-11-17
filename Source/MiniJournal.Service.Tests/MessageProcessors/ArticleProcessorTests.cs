@@ -19,11 +19,8 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
         {
             using (var autoMock = AutoMock.GetLoose())
             {
-                var mockRepository = new Mock<IArticleRepository>();
-                mockRepository.Setup(repository => repository.GetHeaders()).Returns(() => new List<Header>());
-                var sut = autoMock.Create<ArticleProcessor>(
-                    new TypedParameter(typeof(IArticleRepository), mockRepository.Object),
-                    new TypedParameter(typeof(IMapper), new MiniJournalMapper()));
+                Mock<IArticleRepository> mockRepository = CreateMockRepository();
+                ArticleProcessor sut = CreateArticleProcessor(autoMock, mockRepository);
                 var newArticle = new ArticleData
                 {
                     Caption = "Fake Article",
@@ -41,11 +38,8 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
         {
             using (var autoMock = AutoMock.GetLoose())
             {
-                var mockRepository = new Mock<IArticleRepository>();
-                mockRepository.Setup(repository => repository.GetHeaders()).Returns(() => new List<Header>());
-                var sut = autoMock.Create<ArticleProcessor>(
-                    new TypedParameter(typeof(IArticleRepository), mockRepository.Object),
-                    new TypedParameter(typeof(IMapper), new MiniJournalMapper()));
+                Mock<IArticleRepository> mockRepository = CreateMockRepository();
+                ArticleProcessor sut = CreateArticleProcessor(autoMock, mockRepository);
                 var article = new ArticleData
                 {
                     Caption = "Fake Article",
@@ -63,11 +57,8 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
         {
             using (var autoMock = AutoMock.GetLoose())
             {
-                var mockRepository = new Mock<IArticleRepository>();
-                mockRepository.Setup(repository => repository.GetHeaders()).Returns(() => new List<Header>());
-                var sut = autoMock.Create<ArticleProcessor>(
-                    new TypedParameter(typeof(IArticleRepository), mockRepository.Object),
-                    new TypedParameter(typeof(IMapper), new MiniJournalMapper()));
+                Mock<IArticleRepository> mockRepository = CreateMockRepository();
+                ArticleProcessor sut = CreateArticleProcessor(autoMock, mockRepository);
                 var article = new ArticleData
                 {
                     Id = 1,
@@ -79,6 +70,21 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
 
                 mockRepository.Verify(repository => repository.DeleteArticle(It.IsAny<int>()), Times.AtLeastOnce());
             }
+        }
+
+        private ArticleProcessor CreateArticleProcessor(AutoMock autoMock, Mock<IArticleRepository> mockRepository)
+        {
+            var sut = autoMock.Create<ArticleProcessor>(
+                new TypedParameter(typeof(IArticleRepository), mockRepository.Object),
+                new TypedParameter(typeof(IMapper), new MiniJournalMapper()));
+            return sut;
+        }
+
+        private Mock<IArticleRepository> CreateMockRepository()
+        {
+            var mockRepository = new Mock<IArticleRepository>();
+            mockRepository.Setup(repository => repository.GetHeaders()).Returns(() => new List<Header>());
+            return mockRepository;
         }
     }
 }

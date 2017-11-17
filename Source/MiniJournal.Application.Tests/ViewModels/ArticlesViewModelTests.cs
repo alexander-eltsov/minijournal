@@ -16,17 +16,7 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
         {
             using (var autoMock = AutoMock.GetLoose())
             {
-                var moqArticleService = new Mock<IArticleService>();
-                moqArticleService
-                    .Setup(service => service.GetArticleHeaders())
-                    .Returns(() => new HeaderData[1]
-                    {
-                        new HeaderData
-                        {
-                            Id = 1,
-                            Caption = "Fake Article"
-                        }
-                    });
+                Mock<IArticleService> moqArticleService = CreateMoqArticleService();
                 var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
                 sut.LoadHeadersCommand.Execute(null);
@@ -41,17 +31,7 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
         {
             using (var autoMock = AutoMock.GetLoose())
             {
-                var moqArticleService = new Mock<IArticleService>();
-                moqArticleService
-                    .Setup(service => service.GetArticleHeaders())
-                    .Returns(() => new HeaderData[1]
-                    {
-                        new HeaderData
-                        {
-                            Id = 1,
-                            Caption = "Fake Article"
-                        }
-                    });
+                Mock<IArticleService> moqArticleService = CreateMoqArticleService();
                 var sut = autoMock.Create<ArticlesViewModel>(TypedParameter.From(moqArticleService.Object));
 
                 sut.LoadHeadersCommand.Execute(null);
@@ -83,6 +63,22 @@ namespace Infotecs.MiniJournal.Application.Tests.ViewModels
                     service => service.GetArticle(It.Is<int>(i => i == header.Id)),
                     Times.Once());
             }
+        }
+
+        private Mock<IArticleService> CreateMoqArticleService()
+        {
+            var moqArticleService = new Mock<IArticleService>();
+            moqArticleService
+                .Setup(service => service.GetArticleHeaders())
+                .Returns(() => new HeaderData[1]
+                {
+                    new HeaderData
+                    {
+                        Id = 1,
+                        Caption = "Fake Article"
+                    }
+                });
+            return moqArticleService;
         }
     }
 }
