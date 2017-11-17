@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniJournal.Models", "Sourc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniJournal.Specs", "Source\MiniJournal.Specs\MiniJournal.Specs.csproj", "{1AA31A00-ABA5-44C5-8CCE-FAE2F6629DC9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagrams", "Diagrams", "{C5E94FCE-BFE0-467C-ABC0-85AE9D68D87F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
