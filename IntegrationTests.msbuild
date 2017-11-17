@@ -19,5 +19,7 @@
 	        ToolPath="$(NUnitMsbuildPath)"
 	        Where="cat=NUnitRunner"
                 OutputXmlFile="$(SpecFlowTestsPath)\SpecFlowTestResults.html"/>
+	<Message Text="##teamcity[importData type='nunit' path='$(SpecFlowTestsPath)\SpecFlowTestResults.html']"
+                 Importance="High"/>
     </Target>
 </Project>

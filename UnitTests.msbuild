@@ -17,5 +17,7 @@
 	<NUnit3 Assemblies="@(NUnitAssemblies)"
 	        ToolPath="$(NUnitMsbuildPath)"
                 OutputXmlFile="$(UnitTestsPath)\UnitTestResults.html"/>
+	<Message Text="##teamcity[importData type='nunit' path='$(UnitTestsPath)\UnitTestResults.html']"
+                 Importance="High"/>
     </Target>
 </Project>
