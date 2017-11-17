@@ -18,11 +18,11 @@ namespace Infotecs.MiniJournal.Specs
         [BeforeFeature]
         public static void BeforeFeature()
         {
-            server.StartServiceHost();
             testDB.Execute(
                 "create_test_database.sql",
                 "use_test_database.sql",
                 "init_schema.sql");
+            server.StartServiceHost();
         }
 
         [BeforeScenario]
