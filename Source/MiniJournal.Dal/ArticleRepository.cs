@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Infotecs.MiniJournal.Models;
 using LanguageExt;
 using NHibernate;
-using NHibernate.Util;
 
 namespace Infotecs.MiniJournal.Dal
 {

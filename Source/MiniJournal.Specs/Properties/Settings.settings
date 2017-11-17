@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Infotecs.MiniJournal.Specs.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DatabaseDir" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Projects\MiniJournal\Database</Value>
+    </Setting>
+    <Setting Name="ServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:8083/article</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

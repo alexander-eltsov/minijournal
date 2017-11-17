@@ -15,6 +15,7 @@
             <NUnitAssemblies Include="$(SpecFlowTestsPath)\Infotecs.*.Specs.dll" />
         </ItemGroup>
 	<NUnit3 Assemblies="@(NUnitAssemblies)"
+	        Force32Bit="true"
 	        ToolPath="$(NUnitMsbuildPath)"
 	        Where="cat=NUnitRunner"
                 OutputXmlFile="$(SpecFlowTestsPath)\SpecFlowTestResults.html"/>

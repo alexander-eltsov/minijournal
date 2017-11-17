@@ -1,6 +1,3 @@
-USE [MiniJournalDB]
-GO
-
 CREATE TABLE [dbo].[Articles](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Caption] [nvarchar](255) NOT NULL,

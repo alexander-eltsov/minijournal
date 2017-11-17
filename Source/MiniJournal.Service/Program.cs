@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using Autofac;
@@ -27,6 +28,7 @@ namespace Infotecs.MiniJournal.Service
                 {
                     host.Open();
 
+                    Console.WriteLine(host.BaseAddresses.First());
                     Console.WriteLine("Service is running");
                     Console.WriteLine("Press enter to quit...");
                     Console.ReadLine();
@@ -37,6 +39,9 @@ namespace Infotecs.MiniJournal.Service
                 {
                     Console.WriteLine("An exception occurred: {0}", cex.Message);
                     host.Abort();
+
+                    Console.WriteLine("Press enter to quit...");
+                    Console.ReadLine();
                 }
             }
         }

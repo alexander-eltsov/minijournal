@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using Infotecs.MiniJournal.Specs.Properties;
 using Nelibur.ServiceModel.Clients;
 
 namespace Infotecs.MiniJournal.Specs
@@ -7,7 +9,7 @@ namespace Infotecs.MiniJournal.Specs
     {
         public MiniJournalContext()
         {
-            ServiceClient = new JsonServiceClient("http://localhost:8082/article");
+            ServiceClient = new JsonServiceClient(Settings.Default.ServiceAddress);
         }
 
         public JsonServiceClient ServiceClient { get; private set; }
