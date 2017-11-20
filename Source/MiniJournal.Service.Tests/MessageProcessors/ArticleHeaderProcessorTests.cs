@@ -19,8 +19,6 @@ namespace Infotecs.MiniJournal.Service.Tests.MessageProcessors
             sut.Get(new GetArticleHeadersRequest());
 
             mockRepository.Verify(repository => repository.GetHeaders(), Times.AtLeastOnce());
-
-            Assert.IsFalse(true);
         }
     }
 }
