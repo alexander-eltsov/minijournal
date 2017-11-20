@@ -14,9 +14,7 @@
         <ItemGroup>
             <NUnitAssemblies Include="$(UnitTestsPath)\Infotecs.*.Tests.dll" />
         </ItemGroup>
-	<NUnit3 Assemblies="@(NUnitAssemblies)"
-	        ToolPath="$(NUnitMsbuildPath)"
-                OutputXmlFile="$(UnitTestsPath)\UnitTestResults.html"/>
+        <Exec Command="$(NUnitMsbuildPath)\nunit3-console.exe @(NUnitAssemblies,' ') --result $(UnitTestsPath)\UnitTestResults.html" />
 	<Message Text="##teamcity[importData type='nunit' path='$(UnitTestsPath)\UnitTestResults.html']"
                  Importance="High"/>
     </Target>

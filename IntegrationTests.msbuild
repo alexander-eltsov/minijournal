@@ -14,11 +14,7 @@
         <ItemGroup>
             <NUnitAssemblies Include="$(SpecFlowTestsPath)\Infotecs.*.Specs.dll" />
         </ItemGroup>
-	<NUnit3 Assemblies="@(NUnitAssemblies)"
-	        Force32Bit="true"
-	        ToolPath="$(NUnitMsbuildPath)"
-	        Where="cat=NUnitRunner"
-                OutputXmlFile="$(SpecFlowTestsPath)\SpecFlowTestResults.html"/>
+        <Exec Command="$(NUnitMsbuildPath)\nunit3-console.exe @(SpecFlowTestsPath,' ') --x86 --result $(SpecFlowTestsPath)\SpecFlowTestResults.html" />
 	<Message Text="##teamcity[importData type='nunit' path='$(SpecFlowTestsPath)\SpecFlowTestResults.html']"
                  Importance="High"/>
     </Target>
